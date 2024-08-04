@@ -1,0 +1,430 @@
+AcDbEntity
+  8
+0
+  0
+INSERT
+  5
+2E7
+ 100
+AcDbEntity
+  8
+131-Punkt osnowy pomiarowej
+  6
+CONTINUOUS
+ 62
+7
+ 370
+18
+ 100
+AcDbBlockReference
+ 66
+0
+  2
+131
+ 10
+6533732.15
+ 20
+5931071.1
+ 50
+0.0
+ 41
+1.0
+ 42
+1.0
+  0
+TEXT
+  5
+2E8
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny-Atr2
+ 62
+7
+ 100
+AcDbText
+ 10
+6533599.54
+ 20
+5931087.52
+ 40
+0.75
+  1
+78.88
+ 50
+9.032
+ 41
+0.9
+ 51
+0.0
+ 72
+0
+ 100
+AcDbText
+ 73
+0
+  0
+TEXT
+  5
+2E9
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny-Atr3
+ 62
+7
+ 100
+AcDbText
+ 10
+6533599.54
+ 20
+5931086.245
+ 40
+0.75
+  1
+
+ 50
+9.032
+ 41
+0.9
+ 51
+0.0
+ 72
+0
+ 100
+AcDbText
+ 73
+0
+  0
+INSERT
+  5
+2EA
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny
+  6
+CONTINUOUS
+ 62
+7
+ 370
+13
+ 100
+AcDbBlockReference
+ 66
+0
+  2
+PW02
+ 10
+6533599.38
+ 20
+5931087.5
+ 50
+0.0
+ 41
+1.0
+ 42
+1.0
+  0
+TEXT
+  5
+2EB
+ 100
+AcDbEntity
+  8
+punkt wysokościowy naturalny-Atr2
+ 62
+7
+ 100
+AcDbText
+ 10
+6533599.9
+ 20
+5931082.16
+ 11
+6533599.9
+ 21
+5931082.16
+ 40
+0.75
+  1
+78.7
+ 50
+6.842
+ 41
+0.9
+ 51
+0.0
+ 72
+0
+ 100
+AcDbText
+ 73
+3
+  0
+TEXT
+  5
+2EC
+ 100
+AcDbEntity
+  8
+punkt wysokościowy naturalny-Atr3
+ 62
+7
+ 100
+AcDbText
+ 10
+6533599.9
+ 20
+5931080.885
+ 11
+6533599.9
+ 21
+5931080.885
+ 40
+0.75
+  1
+
+ 50
+6.842
+ 41
+0.9
+ 51
+0.0
+ 72
+0
+ 100
+AcDbText
+ 73
+3
+  0
+INSERT
+  5
+2ED
+ 100
+AcDbEntity
+  8
+punkt wysokościowy naturalny
+  6
+CONTINUOUS
+ 62
+7
+ 370
+13
+ 100
+AcDbBlockReference
+ 66
+0
+  2
+PW01
+ 10
+6533599.56
+ 20
+5931082.22
+ 50
+0.0
+ 41
+1.0
+ 42
+1.0
+  0
+TEXT
+  5
+2EE
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny-Atr2
+ 62
+7
+ 100
+AcDbText
+ 10
+6533600.48
+ 20
+5931085.25
+ 40
+0.75
+  1
+78.68
+ 50
+12.768
+ 41
+0.9
+ 51
+0.0
+ 72
+0
+ 100
+AcDbText
+ 73
+0
+  0
+TEXT
+  5
+2EF
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny-Atr3
+ 62
+7
+ 100
+AcDbText
+ 10
+6533600.48
+ 20
+5931083.975
+ 40
+0.75
+  1
+
+ 50
+12.768
+ 41
+0.9
+ 51
+0.0
+ 72
+0
+ 100
+AcDbText
+ 73
+0
+  0
+INSERT
+  5
+2F0
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny
+  6
+CONTINUOUS
+ 62
+7
+ 370
+13
+ 100
+AcDbBlockReference
+ 66
+0
+  2
+PW02
+ 10
+6533599.69
+ 20
+5931085.07
+ 50
+0.0
+ 41
+1.0
+ 42
+1.0
+  0
+TEXT
+  5
+2F1
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny-Atr2
+ 62
+7
+ 100
+AcDbText
+ 10
+6533600.17
+ 20
+5931071.32
+ 11
+6533600.17
+ 21
+5931071.32
+ 40
+0.75
+  1
+77.83
+ 50
+289.259
+ 41
+0.9
+ 51
+0.0
+ 72
+0
+ 100
+AcDbText
+ 73
+3
+  0
+TEXT
+  5
+2F2
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny-Atr3
+ 62
+7
+ 100
+AcDbText
+ 10
+6533600.17
+ 20
+5931070.045
+ 11
+6533600.17
+ 21
+5931070.045
+ 40
+0.75
+  1
+
+ 50
+289.259
+ 41
+0.9
+ 51
+0.0
+ 72
+0
+ 100
+AcDbText
+ 73
+3
+  0
+INSERT
+  5
+2F3
+ 100
+AcDbEntity
+  8
+punkt wysokościowy sztuczny
+  6
+CONTINUOUS
+ 62
+7
+ 370
+13
+ 100
+AcDbBlockReference
+ 66
+0
+  2
+PW02
+ 10
+6533600.03
+ 20
+5931071.72
+ 50
+0.0
+ 41
+1.0
+ 42
+1.0
+  0
+TEXT
+  5
+2F4
+ 100

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+
+  <Identity Name="GuideMe.65288719E24F0" Publisher="CN=GuideMe" Version="1.1.6.0" />
+
+  <mp:PhoneIdentity PhoneProductId="f288b409-677b-4438-87c5-e7b75b9388e0" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
+  <Properties>
+    <DisplayName>DXF Tools</DisplayName>
+    <PublisherDisplayName>GuideMe</PublisherDisplayName>
+    <Logo>Resources\Generated\PackageLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
+      <uap:VisualElements
+        DisplayName="DXF Tools"
+        Description="DXF Tools"
+        Square150x150Logo="Resources\Generated\MediumTile.png"
+        Square44x44Logo="Resources\Generated\AppIcon.png"
+        BackgroundColor="transparent">
+        <uap:DefaultTile Square71x71Logo="Resources\Generated\SmallTile.png" Wide310x150Logo="Resources\Generated\WideTile.png" Square310x310Logo="Resources\Generated\LargeTile.png" />
+        <uap:SplashScreen Image="SplashScreen.png"/>
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+
+</Package>

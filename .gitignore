@@ -1,0 +1,6 @@
+*.received.txt
+.vs/
+bin/
+obj/
+*.user
+*.pfx

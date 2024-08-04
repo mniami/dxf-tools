@@ -10,7 +10,7 @@ namespace DxfToolLib.Schemas
     {
         private readonly IDictionary<string, ISchema> schemas;
 
-        public SchemaStorage(IList<ISchema> schemas) => this.schemas = schemas.ToDictionary(p => p.Name);
+        public SchemaStorage(IEnumerable<ISchema> schemas) => this.schemas = schemas.ToDictionary(p => p.Name);
 
         public IList<string> GetSchemaItemsByName(string name, IDictionary<string, string> variables)
         {

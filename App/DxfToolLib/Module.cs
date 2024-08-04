@@ -14,7 +14,7 @@ namespace DxfToolLib
         public static void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<ISchemaStorage, SchemaStorage>();
-            services.AddTransient<ISchema, HighPointAutoCad2000Schema>();
+            services.AddSingleton<ISchema, HighPointAutoCad2000Schema>();
             services.AddTransient<IDxfParser, DxfParser>();
         }
     }

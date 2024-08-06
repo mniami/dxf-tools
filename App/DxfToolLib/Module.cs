@@ -1,5 +1,6 @@
 ﻿using DxfToolLib.Helpers;
 using DxfToolLib.Schemas;
+using DxfToolLib.Schemas.Core;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,11 @@ namespace DxfToolLib
         {
             services.AddTransient<ISchemaStorage, SchemaStorage>();
             services.AddSingleton<ISchema, HighPointAutoCad2000Schema>();
+            services.AddSingleton<ISchema, CodePageSchema>();
+            services.AddSingleton<ISchema, CadVersionSchema>();
             services.AddTransient<IDxfParser, DxfParser>();
+            services.AddTransient<ISchemaFinder, SchemaFinder>();
+            services.AddTransient<IMatchesFinder, MatchesFinder>();
         }
     }
 }

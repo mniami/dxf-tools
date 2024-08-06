@@ -19,9 +19,14 @@ namespace DxfToolLib.Schemas
     {
         public readonly string NAME = "CODE_PAGE";
     }
+    public class CadVersionMetadata
+    {
+        public readonly string NAME = "CAD_VERSION";
+    }
     internal class KnownSchemas
     {
         public static readonly HighPointAutoCad2000Metadata HighPointAutoCad2000 = new();
-        public static readonly CodePageMetadata CodePageSchema = new();
+        public static readonly CodePageMetadata CodePage = new();
+        public static readonly CadVersionMetadata CadVersion= new();
     }
 }

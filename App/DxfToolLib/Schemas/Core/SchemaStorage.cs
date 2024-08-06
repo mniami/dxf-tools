@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DxfToolLib.Schemas
+namespace DxfToolLib.Schemas.Core
 {
     public class SchemaStorage : ISchemaStorage
     {
@@ -12,7 +12,7 @@ namespace DxfToolLib.Schemas
 
         public SchemaStorage(IEnumerable<ISchema> schemas) => this.schemas = schemas.ToDictionary(p => p.Name);
 
-        public IList<string> GetSchemaItemsByName(string name, IDictionary<string, string> variables)
+        public IList<string> GetSchemaItemsByName(string name, IDictionary<string, string>? variables)
         {
             return schemas[name].GetSchemaItems(variables);
         }

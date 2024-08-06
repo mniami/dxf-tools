@@ -67,7 +67,7 @@ partial class MainForm
         txtDxfHighPointName.Name = "txtDxfHighPointName";
         txtDxfHighPointName.Size = new Size(346, 23);
         txtDxfHighPointName.TabIndex = 1;
-        txtDxfHighPointName.Text = "punkt wysoko";
+        txtDxfHighPointName.Text = "punkt wysokościowy";
         // 
         // groupBox1
         // 

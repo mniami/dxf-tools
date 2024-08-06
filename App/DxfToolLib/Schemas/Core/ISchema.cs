@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DxfToolLib.Schemas
+namespace DxfToolLib.Schemas.Core
 {
     public interface ISchema
     {
         string Name { get; }
-        IList<string> GetSchemaItems(IDictionary<string, string> variables);
+        IList<string> GetSchemaItems(IDictionary<string, string>? variables);
     }
 }

@@ -7,20 +7,20 @@ using DxfToolLib.Schemas.Core;
 
 namespace DxfToolLib.Schemas
 {
-    internal class CodePageSchema : ISchema
+    internal class CadVersionSchema : ISchema
     {
         public string Name
         {
             get
             {
-                return KnownSchemas.CodePage.NAME;
+                return KnownSchemas.CadVersion.NAME;
             }
         }
 
         public IList<string> GetSchemaItems(IDictionary<string, string>? variables)
         {
             return [
-                "\\$DWGCODEPAGE",
+                "\\$ACADVER",
                 ".*",
                 "(.*)",
             ];

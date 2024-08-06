@@ -9,16 +9,17 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using DxfToolLib.Schemas;
+using DxfToolLib.Schemas.Core;
 
 namespace DxfToolLib.Helpers;
 
-public class DxfParser : IDxfParser
+internal class DxfParser : IDxfParser
 {
-    private readonly ISchemaStorage schemaStorage;
+    private readonly ISchemaFinder schemaFinder;
 
-    public DxfParser(ISchemaStorage schemaStorage)
+    public DxfParser(ISchemaFinder schemaFinder)
     {
-        this.schemaStorage = schemaStorage;
+        this.schemaFinder = schemaFinder;
     }
 
     private static DxfDocument? LoadUsingNetDxf(string filePath)
@@ -30,69 +31,78 @@ public class DxfParser : IDxfParser
         return DxfDocument.Load(filePath);
     }
 
-    public string[][] GetFoundMatches(IList<string> schemaItems, string[] input)
-    {
-        IList<string[]> outputResults = [];
-
-        var sequenceIdx = 0;
-        var outputLine = new List<string> { };
-
-        for (int i = 0; i < input.Length; i++)
-        {
-            var line = input[i].Trim();
-            var sequenceValue = schemaItems[sequenceIdx];
-            var match = Regex.Match(line, $"\\s*{sequenceValue}\\s*");
-
-            if (match.Success)
-            {
-                if (match.Groups.Count > 1)
-                {
-                    outputLine.Add(match.Groups[1].Value);
-                }
-                if (sequenceIdx + 1 == schemaItems.Count)
-                {
-                    sequenceIdx = 0;
-                    outputResults.Add([.. outputLine]);
-                    outputLine = [];
-                }
-                else
-                {
-                    sequenceIdx++;
-                }
-            }
-            else
-            {
-                sequenceIdx = 0;
-                outputLine = [];
-            }
-        }
-        return [.. outputResults];
-    }
-
     public string[] Parse(string dxfHighPointName, string[] inputLines)
     {
-        var schemaItems = schemaStorage.GetSchemaItemsByName(KnownSchemas.HighPointAutoCad2000.NAME, new Dictionary<string, string>{
+        var matches = schemaFinder.Matches(KnownSchemas.HighPointAutoCad2000.NAME, new Dictionary<string, string>{
             { KnownSchemas.HighPointAutoCad2000.FIELDS.TITLE, dxfHighPointName },
-        });
-        return GetFoundMatches(schemaItems, inputLines)
-            .Select(item => string.Join(",", item))
-            .ToArray();
+        }, inputLines);
+        return matches;
+    }
+
+    public Encoding GetEncoding(string[] inputLines, Encoding defaultEncoding)
+    {
+        var matches = schemaFinder.Matches(KnownSchemas.CodePage.NAME, null, inputLines);
+        var encodingName = matches.FirstOrDefault();
+
+        if (encodingName == null)
+        {
+            return defaultEncoding;
+        }
+        var encodingText = encodingName.Split('_').Where((el, idx) => idx == 1).FirstOrDefault();
+        if (encodingText == null)
+        {
+            return defaultEncoding;
+        }
+        if (Int32.TryParse(encodingText, out int encodingCodePage))
+        {
+            var encoding = CodePagesEncodingProvider.Instance.GetEncoding(encodingCodePage);
+            if (encoding != null)
+            {
+                return encoding;
+            }
+        }
+        return defaultEncoding;
+    }
+
+    public int GetVersion(string[] inputLines, int defaultValue = 0)
+    {
+        var matches = schemaFinder.Matches(KnownSchemas.CadVersion.NAME, null, inputLines);
+        var versionName = matches.FirstOrDefault();
+        if (versionName == null)
+        {
+            return defaultValue;
+        }
+        if (Int32.TryParse(versionName.AsSpan(2), out int version))
+        {
+            return version;
+        }
+        return defaultValue;
     }
 
     public int Parse(string dxfHighPointName, string filePath, string outputPath)
     {
-        var dxfDocument = LoadUsingNetDxf(filePath);
-        if (dxfDocument != null)
-        {
-            Debug.WriteLine(dxfDocument.Entities.Texts.Count() + "");
-        }
-        var inputLines = File.ReadAllLines(filePath, Encoding.UTF8);
-        var outputLines = Parse(dxfHighPointName, inputLines);
+        var header = File.ReadLines(filePath).Take(20).ToArray();
 
-        File.WriteAllLines(
-            outputPath,
-            outputLines
-        );
-        return outputLines.Length;
+        var dxfEncoding = GetEncoding(header, Encoding.Default);
+        var dxfVersion = GetVersion(header);
+
+        if (dxfVersion > 1015)
+        {
+            var dxfDocument = LoadUsingNetDxf(filePath);
+            if (dxfDocument != null)
+            {
+                Debug.WriteLine(dxfDocument.Entities.Texts.Count() + "");
+            }
+        } else {
+            var inputLines = File.ReadAllLines(filePath, dxfEncoding);
+            var outputLines = Parse(dxfHighPointName, inputLines);
+
+            File.WriteAllLines(
+                outputPath,
+                outputLines
+            );
+            return outputLines.Length;
+        }
+        return 0;
     }
 }

@@ -14,8 +14,8 @@ public partial class MainForm : Form
 
     private void ParseDxf(string dxfHighPointName, string sourceFileName, string destinationFileName)
     {
-        DxfParser.Parse(dxfHighPointName, sourceFileName, destinationFileName);
-        MessageBox.Show("Dane z pliku wyeksportowane poprawnie.", "Export danych z DXF", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        var count = DxfParser.Parse(dxfHighPointName, sourceFileName, destinationFileName);
+        MessageBox.Show($"Znaleziono {count} wpisów.\nDane wyeksportowane do '{destinationFileName}'.", "Export danych z DXF", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void btnExportGpsFromDxf_Click(object sender, EventArgs e)

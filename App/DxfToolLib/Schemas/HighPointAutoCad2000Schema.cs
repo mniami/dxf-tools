@@ -1,4 +1,5 @@
-﻿using DxfToolLib.Utils;
+﻿using DxfToolLib.Schemas.Core;
+using DxfToolLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,10 @@ namespace DxfToolLib.Schemas
             }
         }
 
-        public IList<string> GetSchemaItems(IDictionary<string, string> variables)
+        public IList<string> GetSchemaItems(IDictionary<string, string>? variables)
         {
-            variables.TryGetValue(KnownSchemas.HighPointAutoCad2000.FIELDS.TITLE, out var title);
-            title ??= "";
+            var title = "";
+            variables?.TryGetValue(KnownSchemas.HighPointAutoCad2000.FIELDS.TITLE, out title);
 
             return [
                 "AcDbEntity",

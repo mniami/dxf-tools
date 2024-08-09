@@ -35,7 +35,10 @@ partial class MainForm
         groupBox1 = new GroupBox();
         btnExportGpsFromDxf = new Button();
         label1 = new Label();
+        groupBox2 = new GroupBox();
+        btnSearchHeighPoints = new Button();
         groupBox1.SuspendLayout();
+        groupBox2.SuspendLayout();
         SuspendLayout();
         // 
         // ofdSource
@@ -56,7 +59,7 @@ partial class MainForm
         // 
         toolStrip1.Location = new Point(0, 0);
         toolStrip1.Name = "toolStrip1";
-        toolStrip1.Size = new Size(800, 25);
+        toolStrip1.Size = new Size(715, 25);
         toolStrip1.TabIndex = 0;
         toolStrip1.Text = "toolStrip1";
         // 
@@ -76,7 +79,7 @@ partial class MainForm
         groupBox1.Controls.Add(txtDxfHighPointName);
         groupBox1.Location = new Point(12, 28);
         groupBox1.Name = "groupBox1";
-        groupBox1.Size = new Size(358, 101);
+        groupBox1.Size = new Size(358, 114);
         groupBox1.TabIndex = 2;
         groupBox1.TabStop = false;
         groupBox1.Text = "Export GPS z DXF";
@@ -100,17 +103,42 @@ partial class MainForm
         label1.TabIndex = 2;
         label1.Text = "Nazwa punktu wysokościowego";
         // 
+        // groupBox2
+        // 
+        groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        groupBox2.Controls.Add(btnSearchHeighPoints);
+        groupBox2.Location = new Point(376, 28);
+        groupBox2.Name = "groupBox2";
+        groupBox2.RightToLeft = RightToLeft.No;
+        groupBox2.Size = new Size(327, 410);
+        groupBox2.TabIndex = 3;
+        groupBox2.TabStop = false;
+        groupBox2.Text = "Znajdź punkty wysokościowe";
+        groupBox2.Visible = false;
+        // 
+        // btnSearchHeighPoints
+        // 
+        btnSearchHeighPoints.Location = new Point(6, 22);
+        btnSearchHeighPoints.Name = "btnSearchHeighPoints";
+        btnSearchHeighPoints.Size = new Size(75, 23);
+        btnSearchHeighPoints.TabIndex = 4;
+        btnSearchHeighPoints.Text = "Wyszukaj";
+        btnSearchHeighPoints.UseVisualStyleBackColor = true;
+        btnSearchHeighPoints.Click += btnSearchHeighPoints_Click;
+        // 
         // MainForm
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(800, 450);
+        ClientSize = new Size(715, 450);
+        Controls.Add(groupBox2);
         Controls.Add(groupBox1);
         Controls.Add(toolStrip1);
         Name = "MainForm";
         Text = "DxfTool";
         groupBox1.ResumeLayout(false);
         groupBox1.PerformLayout();
+        groupBox2.ResumeLayout(false);
         ResumeLayout(false);
         PerformLayout();
     }
@@ -124,4 +152,6 @@ partial class MainForm
     private GroupBox groupBox1;
     private Button btnExportGpsFromDxf;
     private Label label1;
+    private GroupBox groupBox2;
+    private Button btnSearchHeighPoints;
 }

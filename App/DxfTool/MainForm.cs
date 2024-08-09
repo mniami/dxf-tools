@@ -12,14 +12,28 @@ public partial class MainForm : Form
         DxfParser = dxfParser;
     }
 
-    private void ParseDxf(string dxfHighPointName, string sourceFileName, string destinationFileName)
+    private void FindHighPoints(string dxfHighPointName, string sourceFileName, string destinationFileName)
     {
         try
         {
             var count = DxfParser.FindHighPoints(dxfHighPointName, sourceFileName, destinationFileName);
             MessageBox.Show($"Znaleziono {count} wpisów.\nDane wyeksportowane do '{destinationFileName}'.", "Export     danych z DXF", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Wyst¹pi³ b³ad", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+    private void FindAllGpsCoords(string sourceFileName, string destinationFileName)
+    {
+        try
+        {
+            var count = DxfParser.FindAllGpsCoords(sourceFileName, destinationFileName);
+            MessageBox.Show($"Znaleziono {count} wpisów.\nDane wyeksportowane do '{destinationFileName}'.", "Export     danych z DXF", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+        catch (Exception ex)
         {
             MessageBox.Show(ex.Message, "Wyst¹pi³ b³ad", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
@@ -31,7 +45,18 @@ public partial class MainForm : Form
         {
             if (ofdDestination.ShowDialog() == DialogResult.OK)
             {
-                ParseDxf(txtDxfHighPointName.Text, ofdSource.FileName, ofdDestination.FileName);
+                FindHighPoints(txtDxfHighPointName.Text, ofdSource.FileName, ofdDestination.FileName);
+            }
+        }
+    }
+
+    private void btnSearchHeighPoints_Click(object sender, EventArgs e)
+    {
+        if (ofdSource.ShowDialog() == DialogResult.OK)
+        {
+            if (ofdDestination.ShowDialog() == DialogResult.OK)
+            {
+                FindAllGpsCoords(ofdSource.FileName, ofdDestination.FileName);
             }
         }
     }

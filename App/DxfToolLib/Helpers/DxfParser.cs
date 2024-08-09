@@ -33,9 +33,10 @@ internal class DxfParser : IDxfParser
         return DxfDocument.Load(filePath);
     }
 
-    public string[] FindHighPoints(string dxfHighPointName, string[] inputLines)
+    public string[] FindHighPoints(int dxfVersion, string dxfHighPointName, string[] inputLines)
     {
-        var matches = schemaFinder.Matches(KnownSchemas.HighPointAutoCad2000.NAME, new Dictionary<string, string>{
+        var schema = dxfVersion > 1015 ? KnownSchemas.HighPointAutoCad2004.NAME : KnownSchemas.HighPointAutoCad2000.NAME;
+        var matches = schemaFinder.Matches(schema, new Dictionary<string, string>{
             { KnownSchemas.HighPointAutoCad2000.FIELDS.TITLE, dxfHighPointName },
         }, inputLines);
         return matches;
@@ -81,7 +82,7 @@ internal class DxfParser : IDxfParser
         return defaultValue;
     }
 
-    public int OperateOnAFile(string dxfHighPointName, string filePath, string outputPath, Func<int, string[], string[]> function)
+    public int OperateOnAFile(string filePath, string outputPath, Func<int, string[], string[]> function)
     {
         var header = File.ReadLines(filePath).Take(20).ToArray();
         var dxfEncoding = GetEncoding(header, Encoding.Default);
@@ -110,22 +111,22 @@ internal class DxfParser : IDxfParser
         //}
         //else
         //{
-        return OperateOnAFile(dxfHighPointName, filePath, outputPath, (dxfVersion, input) =>
+        return OperateOnAFile(filePath, outputPath, (dxfVersion, input) =>
         {
-            if (dxfVersion > 1015)
-            {
-                throw new Exception($"Tej wersji AutoCad {dxfVersion} nie obsługujemy. Program wspiera wersje do 1015 włącznie");
-            }
-            return FindHighPoints(dxfHighPointName, input);
+            return FindHighPoints(dxfVersion, dxfHighPointName, input);
         });
     }
 
-    public int FindAllGpsCoords(string dxfHighPointName, string filePath, string outputPath)
+    public int FindAllGpsCoords(string filePath, string outputPath)
     {
-        return OperateOnAFile(dxfHighPointName, filePath, outputPath, (dxfVersion, input) =>
+        return OperateOnAFile(filePath, outputPath, (dxfVersion, input) =>
         {
-            var coords = gpsCoordsFinder.Find(input, KnownGpsCoords.Poland.Min, KnownGpsCoords.Poland.Max);
-            return coords.Select(coords => $"{coords.Longitude},{coords.Latitude},{coords.Height}").ToArray();
+            if (dxfVersion > 1015)
+            {
+                var coords = gpsCoordsFinder.Find(input, KnownGpsCoords.Poland.Min, KnownGpsCoords.Poland.Max);
+                return coords.Select(coords => $"{coords.Longitude},{coords.Latitude},{coords.Height}").ToArray();
+            }
+            throw new Exception($"Tej wersji AutoCad {dxfVersion} nie obsługujemy. Program wspiera wersje do 1015 włącznie");
         });
     }
 }

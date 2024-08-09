@@ -81,7 +81,7 @@ AcDbText
 AcDbText", @"6533599.54,5931087.52,9.032")]
     public Task ParseTest(string highPointName, string input, string expectedOutput)
     {
-        var outputLines = parser.FindHighPoints(highPointName, input.Split('\n'));
+        var outputLines = parser.FindHighPoints(1015, highPointName, input.Split('\n'));
         Assert.Equal(expectedOutput, string.Join('\n', outputLines));
         return Task.CompletedTask;
     }
@@ -91,7 +91,7 @@ AcDbText", @"6533599.54,5931087.52,9.032")]
     public Task ParseFileTest(string highPointName, string filePath)
     {
         var inputLines = File.ReadAllLines(filePath, System.Text.Encoding.UTF8);
-        var outputLines = parser.FindHighPoints(highPointName, inputLines);
+        var outputLines = parser.FindHighPoints(1015, highPointName, inputLines);
         
         return Verify(outputLines);
     }

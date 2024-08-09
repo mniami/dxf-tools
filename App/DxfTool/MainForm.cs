@@ -14,8 +14,15 @@ public partial class MainForm : Form
 
     private void ParseDxf(string dxfHighPointName, string sourceFileName, string destinationFileName)
     {
-        var count = DxfParser.FindHighPoints(dxfHighPointName, sourceFileName, destinationFileName);
-        MessageBox.Show($"Znaleziono {count} wpisów.\nDane wyeksportowane do '{destinationFileName}'.", "Export danych z DXF", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        try
+        {
+            var count = DxfParser.FindHighPoints(dxfHighPointName, sourceFileName, destinationFileName);
+            MessageBox.Show($"Znaleziono {count} wpisów.\nDane wyeksportowane do '{destinationFileName}'.", "Export     danych z DXF", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        } catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Wyst¹pi³ b³ad", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private void btnExportGpsFromDxf_Click(object sender, EventArgs e)

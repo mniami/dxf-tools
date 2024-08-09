@@ -81,13 +81,14 @@ internal class DxfParser : IDxfParser
         return defaultValue;
     }
 
-    public int OperateOnAFile(string dxfHighPointName, string filePath, string outputPath, Func<string[], string[]> function)
+    public int OperateOnAFile(string dxfHighPointName, string filePath, string outputPath, Func<int, string[], string[]> function)
     {
         var header = File.ReadLines(filePath).Take(20).ToArray();
         var dxfEncoding = GetEncoding(header, Encoding.Default);
         var inputLines = File.ReadAllLines(filePath, dxfEncoding);
+        var dxfVersion = GetVersion(header);
 
-        var outputLines = function(inputLines);
+        var outputLines = function(dxfVersion, inputLines);
 
         File.WriteAllLines(
             outputPath,
@@ -97,22 +98,31 @@ internal class DxfParser : IDxfParser
     }
 
     public int FindHighPoints(string dxfHighPointName, string filePath, string outputPath)
-    {   //var dxfVersion = GetVersion(header);
-
+    {
         //if (dxfVersion > 1015)
         //{
-        //    var dxfDocument = LoadUsingNetDxf(filePath);
-        //    if (dxfDocument != null)
-        //    {
-        //        Debug.WriteLine(dxfDocument.Entities.Texts.Count() + "");
-        //    }
-        //} else {
-        return OperateOnAFile(dxfHighPointName, filePath, outputPath, (input) => FindHighPoints(dxfHighPointName, input));
+        //    //var dxfDocument = LoadUsingNetDxf(filePath);
+        //    //if (dxfDocument != null)
+        //    //{
+        //    //    Debug.WriteLine(dxfDocument.Entities.Texts.Count() + "");
+        //    //}
+        //    throw new Exception("Ta wersja AutoCad nie jest obsługiwana");
+        //}
+        //else
+        //{
+        return OperateOnAFile(dxfHighPointName, filePath, outputPath, (dxfVersion, input) =>
+        {
+            if (dxfVersion > 1015)
+            {
+                throw new Exception($"Tej wersji AutoCad {dxfVersion} nie obsługujemy. Program wspiera wersje do 1015 włącznie");
+            }
+            return FindHighPoints(dxfHighPointName, input);
+        });
     }
 
     public int FindAllGpsCoords(string dxfHighPointName, string filePath, string outputPath)
     {
-        return OperateOnAFile(dxfHighPointName, filePath, outputPath, (input) =>
+        return OperateOnAFile(dxfHighPointName, filePath, outputPath, (dxfVersion, input) =>
         {
             var coords = gpsCoordsFinder.Find(input, KnownGpsCoords.Poland.Min, KnownGpsCoords.Poland.Max);
             return coords.Select(coords => $"{coords.Longitude},{coords.Latitude},{coords.Height}").ToArray();

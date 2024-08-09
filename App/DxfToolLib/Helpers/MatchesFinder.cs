@@ -41,6 +41,10 @@ namespace DxfToolLib.Helpers
                 }
                 else
                 {
+                    if (sequenceIdx > 0)
+                    {
+                        i -= sequenceIdx;
+                    }
                     sequenceIdx = 0;
                     outputLine = [];
                 }

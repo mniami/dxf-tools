@@ -23,10 +23,15 @@ namespace DxfToolLib.Schemas
     {
         public readonly string NAME = "CAD_VERSION";
     }
+    public class GpsCoordsMetadata
+    {
+        public readonly string NAME = "GPS_COORDS";
+    }
     internal class KnownSchemas
     {
         public static readonly HighPointAutoCad2000Metadata HighPointAutoCad2000 = new();
         public static readonly CodePageMetadata CodePage = new();
         public static readonly CadVersionMetadata CadVersion= new();
+        public static readonly GpsCoordsMetadata GpsCoords = new();
     }
 }

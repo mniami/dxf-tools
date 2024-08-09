@@ -3,7 +3,8 @@ namespace DxfToolLib.Helpers
 {
     public interface IDxfParser
     {
-        int Parse(string dxfHighPointName, string filePath, string outputPath);
-        string[] Parse(string dxfHighPointName, string[] inputLines);
+        int FindHighPoints(string dxfHighPointName, string filePath, string outputPath);
+        string[] FindHighPoints(string dxfHighPointName, string[] inputLines);
+        int FindAllGpsCoords(string dxfHighPointName, string filePath, string outputPath);
     }
 }

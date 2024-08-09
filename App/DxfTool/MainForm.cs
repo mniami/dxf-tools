@@ -14,7 +14,7 @@ public partial class MainForm : Form
 
     private void ParseDxf(string dxfHighPointName, string sourceFileName, string destinationFileName)
     {
-        var count = DxfParser.Parse(dxfHighPointName, sourceFileName, destinationFileName);
+        var count = DxfParser.FindHighPoints(dxfHighPointName, sourceFileName, destinationFileName);
         MessageBox.Show($"Znaleziono {count} wpisów.\nDane wyeksportowane do '{destinationFileName}'.", "Export danych z DXF", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 

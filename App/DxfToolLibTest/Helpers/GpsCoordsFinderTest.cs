@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DxfToolLib.Helpers
+namespace DxfToolLibTest.Helpers
 {
-    internal class Cad1015CoordsExtractor
+    internal class GpsCoordsFinderTest
     {
+
     }
 }

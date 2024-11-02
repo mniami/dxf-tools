@@ -25,22 +25,22 @@ namespace DxfToolLib.Schemas
 
             return [
                 "AcDbEntity",
-                Numbers.FLOATING_NUMBER_REGEX_PATTERN,
+                ".*",
                 title + ".*",
-                Numbers.FLOATING_NUMBER_REGEX_PATTERN,
-                Numbers.FLOATING_NUMBER_REGEX_PATTERN,
-                Numbers.FLOATING_NUMBER_REGEX_PATTERN,
+                ".*",
+                ".*",
+                ".*",
                 "AcDbText",
-                Numbers.FLOATING_NUMBER_REGEX_PATTERN,
-                $"({Numbers.FLOATING_NUMBER_REGEX_PATTERN})",
-                Numbers.FLOATING_NUMBER_REGEX_PATTERN,
-                $"({Numbers.FLOATING_NUMBER_REGEX_PATTERN})",
+                ".*",
+                $"\\s*({Numbers.FLOATING_NUMBER_REGEX_PATTERN})\\s*",
+                ".*",
+                $"\\s*({Numbers.FLOATING_NUMBER_REGEX_PATTERN})\\s*",
                 ".*",
                 ".*",
                 ".*",
                 ".*",
                 ".*",
-                $"({Numbers.FLOATING_NUMBER_REGEX_PATTERN})",
+                $"\\s*({Numbers.FLOATING_NUMBER_REGEX_PATTERN})\\s*",
             ];
         }
     }

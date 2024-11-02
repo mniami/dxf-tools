@@ -33,13 +33,38 @@ internal class DxfParser : IDxfParser
         return DxfDocument.Load(filePath);
     }
 
+    private string[] FindHighPointsSchema1(string dxfHighPointName, string[] inputLines)
+    {
+        var schemaKey = KnownSchemas.HighPointAutoCad2000;
+        var schemaName = schemaKey.NAME;
+        var dictionary = new Dictionary<string, string> {
+            { schemaKey.FIELDS.TITLE, dxfHighPointName },
+        };
+        return schemaFinder.Matches(schemaName, dictionary, inputLines);
+    }
+
+    private string[] FindHighPointsSchema2(string dxfHighPointName, string[] inputLines)
+    {
+        var schemaKey = KnownSchemas.HighPointAutoCad2004;
+        var schemaName = schemaKey.NAME;
+        var dictionary = new Dictionary<string, string> {
+            { schemaKey.FIELDS.TITLE, dxfHighPointName },
+        };
+        return schemaFinder.Matches(schemaName, dictionary, inputLines);
+    }
+
     public string[] FindHighPoints(int dxfVersion, string dxfHighPointName, string[] inputLines)
     {
-        var schema = dxfVersion > 1015 ? KnownSchemas.HighPointAutoCad2004.NAME : KnownSchemas.HighPointAutoCad2000.NAME;
-        var matches = schemaFinder.Matches(schema, new Dictionary<string, string>{
-            { KnownSchemas.HighPointAutoCad2000.FIELDS.TITLE, dxfHighPointName },
-        }, inputLines);
-        return matches;
+        var matches1 = FindHighPointsSchema1(dxfHighPointName, inputLines);
+        var matches2 = FindHighPointsSchema2(dxfHighPointName, inputLines);
+        if (matches1.Length > 0)
+        {
+            return matches1;
+        }
+        else
+        {
+            return matches2;
+        }
     }
 
     public Encoding GetEncoding(string[] inputLines, Encoding defaultEncoding)

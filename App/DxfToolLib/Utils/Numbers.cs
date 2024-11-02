@@ -8,6 +8,6 @@ namespace DxfToolLib.Utils
 {
     internal class Numbers
     {
-        public const string FLOATING_NUMBER_REGEX_PATTERN = "[-+]?[0-9]*\\.?[0-9]+";
+        public const string FLOATING_NUMBER_REGEX_PATTERN = "[-+]?[0-9]*[\\.,]?[0-9]+";
     }
 }

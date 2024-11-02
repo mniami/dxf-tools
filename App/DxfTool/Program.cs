@@ -29,9 +29,9 @@ static class Program
         return Host.CreateDefaultBuilder()
                    .ConfigureServices((context, services) =>
                    {
-                       // Register your services here
-                       services.AddSingleton<MainForm>();
+                       Module.ConfigureServices(services);
                        DxfToolLib.Module.ConfigureServices(services);
+                       services.AddSingleton<MainForm>();
                    });
     }
 }

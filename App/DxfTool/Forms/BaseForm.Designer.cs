@@ -28,46 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnClose = new Button();
             SuspendLayout();
-            // 
-            // btnClose
-            // 
-            btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnClose.BackColor = Color.Transparent;
-            btnClose.FlatAppearance.BorderColor = Color.White;
-            btnClose.FlatAppearance.BorderSize = 0;
-            btnClose.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            btnClose.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            btnClose.FlatStyle = FlatStyle.Flat;
-            btnClose.Font = new Font("Gadugi", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnClose.ForeColor = Color.DarkSlateGray;
-            btnClose.Location = new Point(335, -2);
-            btnClose.Name = "btnClose";
-            btnClose.Size = new Size(40, 39);
-            btnClose.TabIndex = 8;
-            btnClose.Text = "x";
-            btnClose.UseVisualStyleBackColor = true;
-            btnClose.Click += btnClose_Click;
-            btnClose.MouseEnter += btnClose_MouseLeave;
-            btnClose.MouseLeave += btnClose_MouseLeave;
             // 
             // BaseForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(374, 339);
-            Controls.Add(btnClose);
-            FormBorderStyle = FormBorderStyle.None;
+            BackColor = SystemColors.ActiveCaptionText;
+            ClientSize = new Size(694, 723);
+            Margin = new Padding(5, 6, 5, 6);
             Name = "BaseForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "BaseForm";
-            MouseDown += Form1_MouseDown;
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Button btnClose;
     }
 }

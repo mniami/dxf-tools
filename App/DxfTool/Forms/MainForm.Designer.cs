@@ -28,6 +28,7 @@ partial class MainForm
     /// </summary>
     private void InitializeComponent()
     {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
         ofdSource = new OpenFileDialog();
         txtDxfFilePath = new TextBox();
         btnExportGpsFromDxf = new Button();
@@ -52,11 +53,13 @@ partial class MainForm
         // 
         txtDxfFilePath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         txtDxfFilePath.BorderStyle = BorderStyle.None;
-        txtDxfFilePath.Font = new Font("Microsoft Sans Serif", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 238);
-        txtDxfFilePath.Location = new Point(132, 373);
-        txtDxfFilePath.Margin = new Padding(17, 19, 17, 19);
+        txtDxfFilePath.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 238);
+        txtDxfFilePath.Location = new Point(73, 171);
+        txtDxfFilePath.Margin = new Padding(9, 9, 9, 9);
+        txtDxfFilePath.Multiline = true;
         txtDxfFilePath.Name = "txtDxfFilePath";
-        txtDxfFilePath.Size = new Size(364, 44);
+        txtDxfFilePath.PlaceholderText = "C:\\moj.dxf";
+        txtDxfFilePath.Size = new Size(535, 40);
         txtDxfFilePath.TabIndex = 1;
         // 
         // btnExportGpsFromDxf
@@ -68,10 +71,9 @@ partial class MainForm
         btnExportGpsFromDxf.FlatStyle = FlatStyle.Flat;
         btnExportGpsFromDxf.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold);
         btnExportGpsFromDxf.ForeColor = SystemColors.Window;
-        btnExportGpsFromDxf.Location = new Point(103, 703);
-        btnExportGpsFromDxf.Margin = new Padding(6);
+        btnExportGpsFromDxf.Location = new Point(55, 329);
         btnExportGpsFromDxf.Name = "btnExportGpsFromDxf";
-        btnExportGpsFromDxf.Size = new Size(470, 85);
+        btnExportGpsFromDxf.Size = new Size(594, 40);
         btnExportGpsFromDxf.TabIndex = 3;
         btnExportGpsFromDxf.Text = "Eksportuj";
         btnExportGpsFromDxf.UseVisualStyleBackColor = false;
@@ -83,12 +85,11 @@ partial class MainForm
         label1.AutoSize = true;
         label1.BackColor = Color.Transparent;
         label1.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 238);
-        label1.Location = new Point(113, 290);
-        label1.Margin = new Padding(6, 0, 6, 0);
+        label1.Location = new Point(61, 136);
         label1.Name = "label1";
-        label1.Size = new Size(97, 32);
+        label1.Size = new Size(101, 15);
         label1.TabIndex = 2;
-        label1.Text = "Plik Dxf";
+        label1.Text = "Importuj plik DXF";
         // 
         // label2
         // 
@@ -97,10 +98,9 @@ partial class MainForm
         label2.BackColor = Color.Transparent;
         label2.Font = new Font("Cambria", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
         label2.ForeColor = Color.FromArgb(41, 61, 118);
-        label2.Location = new Point(219, 92);
-        label2.Margin = new Padding(6, 0, 6, 0);
+        label2.Location = new Point(289, 44);
         label2.Name = "label2";
-        label2.Size = new Size(277, 75);
+        label2.Size = new Size(141, 37);
         label2.TabIndex = 4;
         label2.Text = "DXF GPS";
         label2.TextAlign = ContentAlignment.TopCenter;
@@ -111,10 +111,9 @@ partial class MainForm
         label4.BackColor = Color.Transparent;
         label4.Font = new Font("Microsoft YaHei", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 238);
         label4.ForeColor = Color.SlateGray;
-        label4.Location = new Point(113, 190);
-        label4.Margin = new Padding(6, 0, 6, 0);
+        label4.Location = new Point(61, 89);
         label4.Name = "label4";
-        label4.Size = new Size(496, 100);
+        label4.Size = new Size(608, 46);
         label4.TabIndex = 8;
         label4.Text = "Eksport punktów wysokościowych z plików DXF";
         label4.TextAlign = ContentAlignment.TopCenter;
@@ -123,43 +122,43 @@ partial class MainForm
         // 
         label3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         label3.BackColor = SystemColors.Window;
-        label3.Location = new Point(113, 341);
-        label3.Margin = new Padding(6, 0, 6, 0);
+        label3.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 238);
+        label3.Location = new Point(61, 160);
         label3.Name = "label3";
-        label3.Size = new Size(470, 108);
+        label3.Size = new Size(594, 51);
         label3.TabIndex = 5;
         // 
         // btnDxfFile
         // 
         btnDxfFile.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        btnDxfFile.BackColor = SystemColors.AppWorkspace;
+        btnDxfFile.BackColor = Color.Transparent;
+        btnDxfFile.BackgroundImage = Properties.Resources.folder_3121629;
+        btnDxfFile.BackgroundImageLayout = ImageLayout.Zoom;
         btnDxfFile.FlatAppearance.BorderSize = 0;
         btnDxfFile.FlatAppearance.MouseOverBackColor = Color.FromArgb(107, 150, 228);
         btnDxfFile.Font = new Font("Segoe UI Emoji", 10.875F, FontStyle.Bold, GraphicsUnit.Point, 0);
         btnDxfFile.ForeColor = SystemColors.Window;
-        btnDxfFile.Location = new Point(503, 365);
-        btnDxfFile.Margin = new Padding(6);
+        btnDxfFile.Location = new Point(616, 171);
         btnDxfFile.Name = "btnDxfFile";
-        btnDxfFile.Size = new Size(70, 64);
+        btnDxfFile.Size = new Size(34, 30);
         btnDxfFile.TabIndex = 9;
-        btnDxfFile.Text = "⬇️";
         btnDxfFile.UseVisualStyleBackColor = false;
         btnDxfFile.Click += btnDxfFile_Click;
         // 
         // btnDestinationFilePath
         // 
         btnDestinationFilePath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        btnDestinationFilePath.BackColor = SystemColors.AppWorkspace;
+        btnDestinationFilePath.BackColor = Color.Transparent;
+        btnDestinationFilePath.BackgroundImage = Properties.Resources.folder_3121629;
+        btnDestinationFilePath.BackgroundImageLayout = ImageLayout.Zoom;
         btnDestinationFilePath.FlatAppearance.BorderSize = 0;
         btnDestinationFilePath.FlatAppearance.MouseOverBackColor = Color.FromArgb(107, 150, 228);
         btnDestinationFilePath.Font = new Font("Segoe UI Emoji", 10.875F, FontStyle.Bold, GraphicsUnit.Point, 0);
         btnDestinationFilePath.ForeColor = SystemColors.Window;
-        btnDestinationFilePath.Location = new Point(503, 567);
-        btnDestinationFilePath.Margin = new Padding(6);
+        btnDestinationFilePath.Location = new Point(616, 265);
         btnDestinationFilePath.Name = "btnDestinationFilePath";
-        btnDestinationFilePath.Size = new Size(70, 64);
+        btnDestinationFilePath.Size = new Size(34, 30);
         btnDestinationFilePath.TabIndex = 12;
-        btnDestinationFilePath.Text = "⬇️";
         btnDestinationFilePath.UseVisualStyleBackColor = false;
         btnDestinationFilePath.Click += btnDestinationFilePath_Click;
         // 
@@ -167,21 +166,24 @@ partial class MainForm
         // 
         txtDestionationFilePath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         txtDestionationFilePath.BorderStyle = BorderStyle.None;
-        txtDestionationFilePath.Font = new Font("Microsoft Sans Serif", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 238);
-        txtDestionationFilePath.Location = new Point(132, 575);
-        txtDestionationFilePath.Margin = new Padding(17, 19, 17, 19);
+        txtDestionationFilePath.Font = new Font("Microsoft Sans Serif", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 238);
+        txtDestionationFilePath.Location = new Point(73, 265);
+        txtDestionationFilePath.Margin = new Padding(9, 9, 9, 9);
+        txtDestionationFilePath.Multiline = true;
         txtDestionationFilePath.Name = "txtDestionationFilePath";
-        txtDestionationFilePath.Size = new Size(364, 44);
+        txtDestionationFilePath.PlaceholderText = "C:\\wynik.txt";
+        txtDestionationFilePath.Size = new Size(535, 40);
         txtDestionationFilePath.TabIndex = 10;
+        txtDestionationFilePath.WordWrap = false;
         // 
         // label5
         // 
         label5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         label5.BackColor = SystemColors.Window;
-        label5.Location = new Point(113, 543);
-        label5.Margin = new Padding(6, 0, 6, 0);
+        label5.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 238);
+        label5.Location = new Point(61, 254);
         label5.Name = "label5";
-        label5.Size = new Size(470, 108);
+        label5.Size = new Size(594, 51);
         label5.TabIndex = 11;
         // 
         // label6
@@ -190,19 +192,19 @@ partial class MainForm
         label6.AutoSize = true;
         label6.BackColor = Color.Transparent;
         label6.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 238);
-        label6.Location = new Point(113, 478);
-        label6.Margin = new Padding(6, 0, 6, 0);
+        label6.Location = new Point(61, 224);
         label6.Name = "label6";
-        label6.Size = new Size(433, 32);
+        label6.Size = new Size(102, 15);
         label6.TabIndex = 13;
-        label6.Text = "Plik exportu punktów wysokościowych";
+        label6.Text = "Eksportuj do pliku";
         // 
         // MainForm
         // 
-        AutoScaleDimensions = new SizeF(13F, 32F);
+        AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
+        BackColor = SystemColors.Control;
         BackgroundImageLayout = ImageLayout.Center;
-        ClientSize = new Size(695, 875);
+        ClientSize = new Size(716, 410);
         Controls.Add(label6);
         Controls.Add(btnDestinationFilePath);
         Controls.Add(txtDestionationFilePath);
@@ -214,20 +216,11 @@ partial class MainForm
         Controls.Add(label2);
         Controls.Add(btnExportGpsFromDxf);
         Controls.Add(label1);
-        Margin = new Padding(11, 13, 11, 13);
+        FormBorderStyle = FormBorderStyle.FixedSingle;
+        Icon = (Icon)resources.GetObject("$this.Icon");
+        Margin = new Padding(6, 6, 6, 6);
         Name = "MainForm";
         Text = "Eksport DXF GPS do CSV";
-        Controls.SetChildIndex(label1, 0);
-        Controls.SetChildIndex(btnExportGpsFromDxf, 0);
-        Controls.SetChildIndex(label2, 0);
-        Controls.SetChildIndex(label3, 0);
-        Controls.SetChildIndex(txtDxfFilePath, 0);
-        Controls.SetChildIndex(label4, 0);
-        Controls.SetChildIndex(btnDxfFile, 0);
-        Controls.SetChildIndex(label5, 0);
-        Controls.SetChildIndex(txtDestionationFilePath, 0);
-        Controls.SetChildIndex(btnDestinationFilePath, 0);
-        Controls.SetChildIndex(label6, 0);
         ResumeLayout(false);
         PerformLayout();
     }

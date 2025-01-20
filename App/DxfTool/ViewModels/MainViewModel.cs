@@ -19,7 +19,7 @@ namespace DxfTool.ViewModels
         public void FindHighPointsAction(string heightPointName, string inputFileName, string outputFileName)
         {
             var result = this.parser.FindHighPoints(heightPointName, inputFileName, outputFileName);
-            MessageBox.Show($"Znaleziono {result} plików.");
+            MessageBox.Show($"Ilość znalezionych punktów wysokościowych: {result}", "Analiza zakończona sukcesem", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

@@ -1,0 +1,308 @@
+<Window x:Class="DxfTool.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="DXF Tools - Professional Edition" 
+        Height="550" 
+        Width="850"
+        MinHeight="500"
+        MinWidth="750"
+        WindowStartupLocation="CenterScreen"
+        Background="#F8FAFC">
+    
+    <Window.Resources>
+        <!-- Enhanced Color Palette -->
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#1E40AF"/>
+        <SolidColorBrush x:Key="SecondaryBrush" Color="#3B82F6"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#10B981"/>
+        <SolidColorBrush x:Key="CardBrush" Color="White"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#1F2937"/>
+        <SolidColorBrush x:Key="LightTextBrush" Color="#6B7280"/>
+        
+        <!-- Modern Card Style -->
+        <Style x:Key="ModernCard" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#00000015" BlurRadius="8" ShadowDepth="2" Opacity="0.2"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Premium Button Style -->
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="Margin" Value="6,8,0,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="6">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#00000020" BlurRadius="6" ShadowDepth="2" Opacity="0.2"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#60A5FA"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#00000030" BlurRadius="16" ShadowDepth="6" Opacity="0.4"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-2"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#2563EB"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#00000020" BlurRadius="8" ShadowDepth="2" Opacity="0.25"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="1"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Success Button -->
+        <Style x:Key="SuccessButton" BasedOn="{StaticResource ModernButton}" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="Margin" Value="0,16"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#34D399"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#059669"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <!-- Modern TextBox -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="8,8,6,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="6">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#00000008" BlurRadius="6" ShadowDepth="2" Opacity="0.15"/>
+                            </Border.Effect>
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                        Margin="{TemplateBinding Padding}"
+                                        VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource SecondaryBrush}"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#3B82F620" BlurRadius="12" ShadowDepth="3" Opacity="0.3"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Modern Label -->
+        <Style x:Key="ModernLabel" TargetType="Label">
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,8,8,8"/>
+        </Style>
+        
+        <!-- Section Header -->
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header Section -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" Padding="20,16">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="📐" FontSize="28" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="DXF Tools Professional" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="High Points Finder &amp; GPS Coordinates Extractor" FontSize="12" Foreground="#93C5FD"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20">
+            <StackPanel MaxWidth="800">
+                
+                <!-- File Selection Card -->
+                <Border Style="{StaticResource ModernCard}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <TextBlock Text="📂" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="File Selection" Style="{StaticResource SectionHeader}"/>
+                        </StackPanel>
+                        
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="12"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Source File -->
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Content="📄 Source DXF:" 
+                                   Style="{StaticResource ModernLabel}"/>
+                            
+                            <TextBox Grid.Row="0" Grid.Column="1" 
+                                     Name="txtDxfFilePath"
+                                     Text="{Binding DxfFilePath, UpdateSourceTrigger=PropertyChanged}" 
+                                     Style="{StaticResource ModernTextBox}"
+                                     IsReadOnly="True"
+                                     Background="#F8FAFC"/>
+                            
+                            <Button Grid.Row="0" Grid.Column="2" 
+                                    Content="📂 Browse" 
+                                    Command="{Binding BrowseDxfFileCommand}"
+                                    Style="{StaticResource ModernButton}"
+                                    HorizontalAlignment="Stretch"/>
+
+                            <!-- Output File -->
+                            <Label Grid.Row="2" Grid.Column="0" 
+                                   Content="💾 Output File:" 
+                                   Style="{StaticResource ModernLabel}"/>
+                            
+                            <TextBox Grid.Row="2" Grid.Column="1" 
+                                     Name="txtDestinationFilePath"
+                                     Text="{Binding DestinationFilePath, UpdateSourceTrigger=PropertyChanged}" 
+                                     Style="{StaticResource ModernTextBox}"
+                                     IsReadOnly="True"
+                                     Background="#F8FAFC"/>
+                            
+                            <Button Grid.Row="2" Grid.Column="2" 
+                                    Content="💾 Save As" 
+                                    Command="{Binding BrowseDestinationFileCommand}"
+                                    Style="{StaticResource ModernButton}"
+                                    HorizontalAlignment="Stretch"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Processing Card -->
+                <Border Style="{StaticResource ModernCard}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <TextBlock Text="⚡" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="Data Processing" Style="{StaticResource SectionHeader}"/>
+                        </StackPanel>
+                        
+                        <Button Content="🔍 Extract High Points from DXF File" 
+                                Command="{Binding ProcessFileCommand}"
+                                Style="{StaticResource SuccessButton}"
+                                HorizontalAlignment="Center"
+                                MinWidth="280"/>
+                        
+                        <!-- Status Display -->
+                        <Border Background="#F1F5F9" CornerRadius="4" Padding="12,8" Margin="0,12,0,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="📊" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="{Binding StatusMessage}" 
+                                           FontSize="14" 
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Results Card -->
+                <Border Style="{StaticResource ModernCard}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="📈" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="Processing Results" Style="{StaticResource SectionHeader}"/>
+                        </StackPanel>
+                        
+                        <Border Background="#FAFBFC" 
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1" 
+                                CornerRadius="6"
+                                MinHeight="120">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                                        HorizontalScrollBarVisibility="Auto"
+                                        Padding="12">
+                                <TextBlock Text="{Binding ResultsText}" 
+                                           FontFamily="Cascadia Code, Consolas, Monaco, 'Courier New', monospace"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextBrush}"
+                                           TextWrapping="Wrap"
+                                           LineHeight="16"/>
+                            </ScrollViewer>
+                        </Border>
+                    </StackPanel>
+                </Border>
+                
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

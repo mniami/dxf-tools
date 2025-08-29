@@ -1,37 +1,40 @@
 using System;
-using DxfToolLib.Schemas;
+using System.Windows;
+using DxfTool.Views;
+using DxfTool.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace DxfTool;
 
-static class Program
+class Program
 {
-    /// <summary>
-    ///  The main entry point for the application.
-    /// </summary>
     [STAThread]
     static void Main()
     {
-        var host = CreateHostBuilder().Build();
-
-        Application.SetHighDpiMode(HighDpiMode.SystemAware);
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-
-        var services = host.Services;
-        var mainForm = services.GetRequiredService<MainForm>();
-
-        Application.Run(mainForm);
-    }
-    static IHostBuilder CreateHostBuilder()
-    {
-        return Host.CreateDefaultBuilder()
-                   .ConfigureServices((context, services) =>
-                   {
-                       Module.ConfigureServices(services);
-                       DxfToolLib.Module.ConfigureServices(services);
-                       services.AddSingleton<MainForm>();
-                   });
+        try
+        {
+            // Modern application builder approach
+            var builder = Host.CreateApplicationBuilder();
+            
+            // Register services
+            Module.ConfigureServices(builder.Services);
+            DxfToolLib.Module.ConfigureServices(builder.Services);
+            builder.Services.AddSingleton<MainViewModel>();
+            builder.Services.AddSingleton<MainWindow>();
+            
+            var host = builder.Build();
+            
+            var app = new Application();
+            var mainWindow = host.Services.GetRequiredService<MainWindow>();
+            
+            app.Run(mainWindow);
+            
+            host.Dispose();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Application startup error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }

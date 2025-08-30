@@ -51,61 +51,18 @@ jobs:
         Set-Content $projectPath $content
       shell: powershell
       
-    - name: Build application
-      run: |
-        dotnet publish App/DxfTool/DxfTool.csproj `
-          --configuration Release `
-          --runtime win-x64 `
-          --self-contained true `
-          --output ./publish/win-x64 `
-          -p:PublishSingleFile=true `
-          -p:IncludeNativeLibrariesForSelfExtract=true
-          
-    - name: Build portable version
-      run: |
-        dotnet publish App/DxfTool/DxfTool.csproj `
-          --configuration Release `
-          --runtime win-x64 `
-          --self-contained true `
-          --output ./publish/portable `
-          -p:PublishSingleFile=true `
-          -p:IncludeNativeLibrariesForSelfExtract=true
-          
-    - name: Install Squirrel
-      run: dotnet tool install --global squirrel
-      
-    - name: Create Squirrel package
+    - name: Build and package using deploy script
       run: |
         $version = "${{ steps.get_version.outputs.VERSION }}"
-        
-        # Create a simple nuspec file for Squirrel
-        @"
-        <?xml version="1.0" encoding="utf-8"?>
-        <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-          <metadata>
-            <id>DxfTools</id>
-            <version>$version</version>
-            <title>DXF Tools Professional</title>
-            <authors>mniami</authors>
-            <description>High Points Finder and GPS Coordinates Extractor for DXF files</description>
-            <requireLicenseAcceptance>false</requireLicenseAcceptance>
-          </metadata>
-        </package>
-        "@ | Out-File -FilePath "./DxfTools.nuspec" -Encoding UTF8
-        
-        # Create Squirrel package
-        squirrel pack --packId DxfTools --packVersion $version --packDirectory ./publish/win-x64 --releaseDir ./releases
+        cd App/DxfTool
+        .\deploy-website.ps1 -Version $version -WebsiteUrl "https://github.com/mniami/dxf-tools/releases"
       shell: powershell
         
-    - name: Create ZIP archives
+    - name: Copy release files to root
       run: |
         $version = "${{ steps.get_version.outputs.VERSION }}"
-        
-        # Create ZIP for installer version
-        Compress-Archive -Path "./releases/*" -DestinationPath "./DxfTools-v$version-installer.zip"
-        
-        # Create ZIP for portable version
-        Compress-Archive -Path "./publish/portable/*" -DestinationPath "./DxfTools-v$version-portable.zip"
+        Copy-Item "App/DxfTool/website-deploy/downloads/DxfTools-v$version-installer.zip" "./"
+        Copy-Item "App/DxfTool/website-deploy/downloads/DxfTools-v$version-portable.zip" "./"
       shell: powershell
       
     - name: Create Release
@@ -120,15 +77,17 @@ jobs:
           ## DXF Tools Professional v${{ steps.get_version.outputs.VERSION }}
           
           ### 🚀 What's New
-          - Bug fixes and improvements
-          - Enhanced stability
+          - **Complete Polish Localization**: All user interface text now displays in Polish
+          - **Enhanced User Experience**: Polish-speaking users can now use the application in their native language
+          - **Translated Website**: Download page and documentation now available in Polish
+          - **Improved Stability**: Bug fixes and performance improvements
           
           ### 📦 Download Options
           
-          **Recommended: Auto-Updating Installer**
+          **Recommended: Installer Version**
           - Download `DxfTools-v${{ steps.get_version.outputs.VERSION }}-installer.zip`
-          - Extract and run `Setup.exe`
-          - Automatic updates will be delivered seamlessly
+          - Extract and run `Install.bat` as administrator
+          - Creates desktop shortcut and installs to user directory
           
           **Portable Version**
           - Download `DxfTools-v${{ steps.get_version.outputs.VERSION }}-portable.zip`
@@ -138,6 +97,10 @@ jobs:
           ### 🔧 Requirements
           - Windows 10 or later
           - .NET 8 Runtime (included in self-contained builds)
+          
+          ### 🌍 Language Support
+          - Polish (Polski) - Complete localization
+          - All UI elements, messages, and dialogs in Polish
           
         draft: false
         prerelease: false

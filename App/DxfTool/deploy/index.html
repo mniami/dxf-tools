@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narzędzia DXF Professional - Pobieranie</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            opacity: 0.9;
+        }
+        .download-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        .download-card:hover {
+            transform: translateY(-5px);
+        }
+        .download-card h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+        }
+        .download-card .icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .version-info {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+        .feature .icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📐 Narzędzia DXF Professional</h1>
+            <p>Wyszukiwarka Punktów Wysokościowych i Ekstraktor Współrzędnych GPS</p>
+            <p>Wersja {{VERSION}} - {{RELEASE_DATE}}</p>
+        </div>
+
+        <div class="version-info">
+            <h3>🚀 Co nowego w wersji {{VERSION}}</h3>
+            <ul>
+                <li>Automatyczne sprawdzanie aktualizacji i powiadomienia</li>
+                <li>Ulepszone interfejs użytkownika z nowoczesnym designem</li>
+                <li>Poprawiona wydajność przetwarzania plików DXF</li>
+                <li>Lepsze obsługiwanie błędów i raportowanie</li>
+                <li>Uproszczony proces instalacji</li>
+            </ul>
+        </div>
+
+        <div class="download-card">
+            <h3><span class="icon">💾</span>Wersja Instalacyjna (Zalecana)</h3>
+            <p>Pełna instalacja ze skrótem na pulpicie i obsługą automatycznych aktualizacji. Idealna dla zwykłych użytkowników.</p>
+            <p><strong>Rozmiar:</strong> ~2 MB | <strong>Wymagania:</strong> Windows 10+, .NET 8</p>
+            <a href="downloads/DxfTools-v{{VERSION}}-installer.zip" class="download-btn">📥 Pobierz Instalator</a>
+        </div>
+
+        <div class="download-card">
+            <h3><span class="icon">🚀</span>Wersja Przenośna</h3>
+            <p>Pojedynczy plik wykonywalny, nie wymaga instalacji. Świetny na dyski USB lub środowiska z ograniczeniami.</p>
+            <p><strong>Rozmiar:</strong> ~64 MB | <strong>Wymagania:</strong> Windows 10+ (samodzielny)</p>
+            <a href="downloads/DxfTools-v{{VERSION}}-portable.zip" class="download-btn">📥 Pobierz Wersję Przenośną</a>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="icon">🎯</div>
+                <h4>Wykrywanie Punktów Wysokościowych</h4>
+                <p>Automatyczne znajdowanie i wyodrębnianie punktów wysokościowych z plików DXF</p>
+            </div>
+            <div class="feature">
+                <div class="icon">🌍</div>
+                <h4>Współrzędne GPS</h4>
+                <p>Wyodrębnianie współrzędnych GPS i danych geograficznych</p>
+            </div>
+            <div class="feature">
+                <div class="icon">📊</div>
+                <h4>Eksport Danych</h4>
+                <p>Eksportowanie wyników do formatów TXT, CSV i innych</p>
+            </div>
+            <div class="feature">
+                <div class="icon">⚡</div>
+                <h4>Szybkie Przetwarzanie</h4>
+                <p>Zoptymalizowane dla dużych plików DXF i przetwarzania wsadowego</p>
+            </div>
+        </div>
+
+        <div class="version-info">
+            <h3>📋 Instrukcje Instalacji</h3>
+            <h4>Wersja Instalacyjna:</h4>
+            <ol>
+                <li>Pobierz plik ZIP instalatora</li>
+                <li>Rozpakuj plik ZIP do folderu tymczasowego</li>
+                <li>Uruchom <code>Install.bat</code> jako administrator</li>
+                <li>Aplikacja zostanie zainstalowana i utworzony skrót na pulpicie</li>
+            </ol>
+            
+            <h4>Wersja Przenośna:</h4>
+            <ol>
+                <li>Pobierz przenośny plik ZIP</li>
+                <li>Rozpakuj do wybranej lokalizacji</li>
+                <li>Uruchom <code>DxfTool.exe</code> bezpośrednio</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

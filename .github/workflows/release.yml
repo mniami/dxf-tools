@@ -57,6 +57,8 @@ jobs:
     - name: Build and package using deploy script
       run: |
         $version = "${{ steps.get_version.outputs.VERSION }}"
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+        $PSDefaultParameterValues['Out-File:Encoding'] = 'UTF8'
         cd App/DxfTool
         .\deploy-website.ps1 -Version $version -WebsiteUrl "https://github.com/mniami/dxf-tools/releases"
       shell: powershell

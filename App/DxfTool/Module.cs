@@ -1,4 +1,5 @@
-﻿using DxfTool.ViewModels;
+﻿using DxfTool.Services;
+using DxfTool.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DxfTool
@@ -7,6 +8,7 @@ namespace DxfTool
     {
         public static void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IUpdateService, UpdateService>();
             services.AddSingleton<MainViewModel>();
         }
     }

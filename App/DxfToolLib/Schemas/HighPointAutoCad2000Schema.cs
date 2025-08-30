@@ -26,7 +26,7 @@ namespace DxfToolLib.Schemas
             return [
                 "AcDbEntity",
                 ".*",
-                title + ".*",
+                string.IsNullOrEmpty(title) ? ".*" : title + ".*",
                 ".*",
                 ".*",
                 ".*",

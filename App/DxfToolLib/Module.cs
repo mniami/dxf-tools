@@ -17,6 +17,7 @@ namespace DxfToolLib
             services.AddTransient<ISchemaStorage, SchemaStorage>();
             services.AddSingleton<ISchema, HighPointAutoCad2004Schema>();
             services.AddSingleton<ISchema, HighPointAutoCad2000Schema>();
+            services.AddSingleton<ISchema, GeometryPointAutoCad2004Schema>();
             services.AddSingleton<ISchema, CodePageSchema>();
             services.AddSingleton<ISchema, CadVersionSchema>();
             services.AddSingleton<ISchema, GpsCoordsSchema>();

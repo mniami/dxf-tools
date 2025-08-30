@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DxfToolLib.Schemas
+﻿namespace DxfToolLib.Schemas
 {
     public class HighPointAutoCad2000FieldsMetadata
     {
@@ -19,6 +13,10 @@ namespace DxfToolLib.Schemas
     {
         public readonly string NAME = "HIGH_POINT_AUTO_CAD_2004";
         public readonly HighPointAutoCad2000FieldsMetadata FIELDS = new();
+    }
+    public class GeometryPointAutoCad2004Metadata
+    {
+        public readonly string NAME = "GEOMETRY_POINT_AUTO_CAD_2004";
     }
     public class CodePageMetadata
     {
@@ -36,8 +34,10 @@ namespace DxfToolLib.Schemas
     {
         public static readonly HighPointAutoCad2000Metadata HighPointAutoCad2000 = new();
         public static readonly HighPointAutoCad2004Metadata HighPointAutoCad2004 = new();
+        public static readonly GeometryPointAutoCad2004Metadata GeometryPointAutoCad2004 = new();
         public static readonly CodePageMetadata CodePage = new();
         public static readonly CadVersionMetadata CadVersion= new();
         public static readonly GpsCoordsMetadata GpsCoords = new();
+        public static readonly GeometryPointAutoCad2004Metadata GeometryPointAutocad2004 = new();
     }
 }

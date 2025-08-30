@@ -33,6 +33,14 @@ internal class DxfParser : IDxfParser
         return DxfDocument.Load(filePath);
     }
 
+    private string[] FindGeometryPointsSchema(string[] inputLines)
+    {
+        var schemaKey = KnownSchemas.GeometryPointAutocad2004;
+        var schemaName = schemaKey.NAME;
+        var dictionary = new Dictionary<string, string> {};
+        return schemaFinder.Matches(schemaName, dictionary, inputLines);
+    }
+
     private string[] FindHighPointsSchema1(string dxfHighPointName, string[] inputLines)
     {
         var schemaKey = KnownSchemas.HighPointAutoCad2000;
@@ -65,6 +73,12 @@ internal class DxfParser : IDxfParser
         {
             return matches2;
         }
+    }
+
+    public string[] FindHighPoints(int dxfVersion, string[] inputLines)
+    {
+        // Find high points without specifying a name (use empty string to match all)
+        return FindHighPoints(dxfVersion, "", inputLines);
     }
 
     public Encoding GetEncoding(string[] inputLines, Encoding defaultEncoding)
@@ -123,6 +137,19 @@ internal class DxfParser : IDxfParser
         return outputLines.Length;
     }
 
+    public string[] FindGeometryPoints(int dxfVersion, string[] inputLines)
+    {
+        return FindGeometryPointsSchema(inputLines);
+    }
+
+    public int FindGeometryPoints(string filePath, string outputPath)
+    {
+        return OperateOnAFile(filePath, outputPath, (dxfVersion, input) =>
+        {
+            return FindGeometryPoints(dxfVersion, input);
+        });
+    }
+
     public int FindHighPoints(string dxfHighPointName, string filePath, string outputPath)
     {
         //if (dxfVersion > 1015)
@@ -139,6 +166,14 @@ internal class DxfParser : IDxfParser
         return OperateOnAFile(filePath, outputPath, (dxfVersion, input) =>
         {
             return FindHighPoints(dxfVersion, dxfHighPointName, input);
+        });
+    }
+
+    public int FindHighPoints(string filePath, string outputPath)
+    {
+        return OperateOnAFile(filePath, outputPath, (dxfVersion, input) =>
+        {
+            return FindHighPoints(dxfVersion, input);
         });
     }
 

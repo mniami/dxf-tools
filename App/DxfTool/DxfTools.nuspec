@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>DxfTools</id>
+    <version>1.0.13</version>
+    <title>DXF Tools Professional</title>
+    <authors>mniami</authors>
+    <description>High Points Finder and GPS Coordinates Extractor for DXF files</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>dxf autocad gis coordinates</tags>
+  </metadata>
+</package>

@@ -3,12 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DxfTool.Views"
         mc:Ignorable="d"
-        Title="DXF Tools - Professional Edition" 
-        Height="550" 
-        Width="850"
-        MinHeight="500"
-        MinWidth="750"
+        Title="Narzędzia DXF - Edycja Profesjonalna" 
+        Height="750" 
+        Width="750"
+        MinHeight="480"
+        MinWidth="650"
         WindowStartupLocation="CenterScreen"
         Background="#F8FAFC">
     
@@ -28,8 +29,8 @@
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect Color="#00000015" BlurRadius="8" ShadowDepth="2" Opacity="0.2"/>
@@ -42,13 +43,13 @@
             <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="16,10"/>
-            <Setter Property="Margin" Value="6,8,0,8"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="Margin" Value="4,6,0,6"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="MinWidth" Value="100"/>
-            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="MinHeight" Value="34"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -95,10 +96,10 @@
         <!-- Success Button -->
         <Style x:Key="SuccessButton" BasedOn="{StaticResource ModernButton}" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
-            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Padding" Value="24,12"/>
-            <Setter Property="Margin" Value="0,16"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="Margin" Value="0,12"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#34D399"/>
@@ -111,14 +112,14 @@
         
         <!-- Modern TextBox -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
-            <Setter Property="Padding" Value="12,10"/>
-            <Setter Property="Margin" Value="8,8,6,8"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Margin" Value="6,6,4,6"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="MinHeight" Value="34"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -154,7 +155,7 @@
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,8,8,8"/>
+            <Setter Property="Margin" Value="0,6,6,6"/>
         </Style>
         
         <!-- Section Header -->
@@ -162,7 +163,7 @@
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
         </Style>
     </Window.Resources>
     
@@ -174,44 +175,65 @@
         
         <!-- Header Section -->
         <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" Padding="20,16">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Main Header -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="📐" FontSize="28" VerticalAlignment="Center" Margin="0,0,10,0"/>
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="DXF Tools Professional" FontSize="20" FontWeight="Bold" Foreground="White"/>
-                        <TextBlock Text="High Points Finder &amp; GPS Coordinates Extractor" FontSize="12" Foreground="#93C5FD"/>
+                        <TextBlock Text="Narzędzia DXF Professional" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="Wyszukiwarka Punktów Wysokościowych i Ekstraktor Współrzędnych GPS" FontSize="12" Foreground="#93C5FD"/>
                     </StackPanel>
                 </StackPanel>
-            </StackPanel>
+                
+                <!-- Update Section -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" 
+                           Margin="0,8,0,0" Visibility="{Binding UpdateMessage, Converter={x:Static local:StringToVisibilityConverter.Instance}}">
+                    <TextBlock Text="🔄" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding UpdateMessage}" FontSize="12" Foreground="#93C5FD" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <Button Content="Zainstaluj Aktualizację" 
+                            Command="{Binding InstallUpdateCommand}"
+                            Visibility="{Binding UpdateAvailable, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"
+                            FontSize="10" 
+                            Padding="8,2"
+                            Background="#10B981"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
         </Border>
         
         <!-- Main Content -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20">
-            <StackPanel MaxWidth="800">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="15">
+            <StackPanel MaxWidth="750">
                 
                 <!-- File Selection Card -->
                 <Border Style="{StaticResource ModernCard}">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <TextBlock Text="📂" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="File Selection" Style="{StaticResource SectionHeader}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="📁 Wybór Pliku" Style="{StaticResource SectionHeader}"/>
                         </StackPanel>
                         
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="12"/>
+                                <RowDefinition Height="8"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
                             
                             <!-- Source File -->
                             <Label Grid.Row="0" Grid.Column="0" 
-                                   Content="📄 Source DXF:" 
+                                   Content="📄 Plik Źródłowy DXF:" 
                                    Style="{StaticResource ModernLabel}"/>
                             
                             <TextBox Grid.Row="0" Grid.Column="1" 
@@ -222,14 +244,14 @@
                                      Background="#F8FAFC"/>
                             
                             <Button Grid.Row="0" Grid.Column="2" 
-                                    Content="📂 Browse" 
+                                    Content="Przeglądaj" 
                                     Command="{Binding BrowseDxfFileCommand}"
                                     Style="{StaticResource ModernButton}"
                                     HorizontalAlignment="Stretch"/>
 
                             <!-- Output File -->
                             <Label Grid.Row="2" Grid.Column="0" 
-                                   Content="💾 Output File:" 
+                                   Content="💾 Plik Wyjściowy:" 
                                    Style="{StaticResource ModernLabel}"/>
                             
                             <TextBox Grid.Row="2" Grid.Column="1" 
@@ -240,7 +262,7 @@
                                      Background="#F8FAFC"/>
                             
                             <Button Grid.Row="2" Grid.Column="2" 
-                                    Content="💾 Save As" 
+                                    Content="Zapisz Jako" 
                                     Command="{Binding BrowseDestinationFileCommand}"
                                     Style="{StaticResource ModernButton}"
                                     HorizontalAlignment="Stretch"/>
@@ -248,49 +270,86 @@
                     </StackPanel>
                 </Border>
 
+                <!-- Data Type Selection Card -->
+                <Border Style="{StaticResource ModernCard}">
+                    <StackPanel>
+                        <TextBlock Text="🎯 Ustawienia Ekstrakcji Danych" Style="{StaticResource SectionHeader}"/>
+                        
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Data Type Selection -->
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Content="📊 Typ Danych:" 
+                                   Style="{StaticResource ModernLabel}"/>
+                            
+                            <ComboBox Grid.Row="0" Grid.Column="1"
+                                      Name="cmbDataType"
+                                      ItemsSource="{Binding DataExtractionTypes}"
+                                      SelectedItem="{Binding SelectedDataType, UpdateSourceTrigger=PropertyChanged}"
+                                      Margin="6,6,4,6"
+                                      FontSize="13"
+                                      MinHeight="34"
+                                      Background="White"
+                                      BorderBrush="{StaticResource BorderBrush}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Converter={x:Static local:DataTypeToIconConverter.Instance}}" 
+                                                       FontSize="14" 
+                                                       VerticalAlignment="Center" 
+                                                       Margin="0,0,8,0"/>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Converter={x:Static local:DataTypeToDisplayNameConverter.Instance}}" 
+                                                           FontWeight="Medium"/>
+                                                <TextBlock Text="{Binding Converter={x:Static local:DataTypeToDescriptionConverter.Instance}}" 
+                                                           FontSize="11" 
+                                                           Foreground="{StaticResource LightTextBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
                 <!-- Processing Card -->
                 <Border Style="{StaticResource ModernCard}">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <TextBlock Text="⚡" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="Data Processing" Style="{StaticResource SectionHeader}"/>
-                        </StackPanel>
+                        <TextBlock Text="⚡ Przetwarzanie Danych" Style="{StaticResource SectionHeader}"/>
                         
-                        <Button Content="🔍 Extract High Points from DXF File" 
+                        <Button Content="{Binding SelectedDataType, Converter={x:Static local:DataTypeToButtonTextConverter.Instance}}" 
                                 Command="{Binding ProcessFileCommand}"
                                 Style="{StaticResource SuccessButton}"
                                 HorizontalAlignment="Center"
-                                MinWidth="280"/>
-                        
-                        <!-- Status Display -->
-                        <Border Background="#F1F5F9" CornerRadius="4" Padding="12,8" Margin="0,12,0,0">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="📊" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <TextBlock Text="{Binding StatusMessage}" 
-                                           FontSize="14" 
-                                           FontWeight="Medium"
-                                           Foreground="{StaticResource TextBrush}"/>
-                            </StackPanel>
-                        </Border>
+                                MinWidth="250"/>
                     </StackPanel>
                 </Border>
 
                 <!-- Results Card -->
                 <Border Style="{StaticResource ModernCard}">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBlock Text="📈" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="Processing Results" Style="{StaticResource SectionHeader}"/>
-                        </StackPanel>
+                        <TextBlock Text="{Binding StatusMessage}" 
+                                           FontSize="13" 
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextBrush}"/>
+                        <TextBlock Text="📈 Wyniki Przetwarzania" Style="{StaticResource SectionHeader}"/>
                         
                         <Border Background="#FAFBFC" 
                                 BorderBrush="{StaticResource BorderBrush}"
                                 BorderThickness="1" 
                                 CornerRadius="6"
-                                MinHeight="120">
+                                MinHeight="100">
                             <ScrollViewer VerticalScrollBarVisibility="Auto" 
                                         HorizontalScrollBarVisibility="Auto"
-                                        Padding="12">
+                                        Padding="10">
                                 <TextBlock Text="{Binding ResultsText}" 
                                            FontFamily="Cascadia Code, Consolas, Monaco, 'Courier New', monospace"
                                            FontSize="12"

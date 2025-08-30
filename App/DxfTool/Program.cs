@@ -34,7 +34,31 @@ class Program
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Application startup error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Print detailed error to console
+            Console.WriteLine("=== APPLICATION STARTUP ERROR ===");
+            Console.WriteLine($"Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            Console.WriteLine($"Error Type: {ex.GetType().Name}");
+            Console.WriteLine($"Message: {ex.Message}");
+            Console.WriteLine($"Stack Trace:");
+            Console.WriteLine(ex.StackTrace);
+            Console.WriteLine("================================");
+            
+            // Create detailed error message for dialog
+            string detailedErrorMessage = $"Error Type: {ex.GetType().Name}\n\n" +
+                                        $"Message: {ex.Message}\n\n" +
+                                        $"Stack Trace:\n{ex.StackTrace}\n\n" +
+                                        $"Time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}";
+            
+            // Show custom error dialog that allows copying
+            try
+            {
+                ErrorDialog.ShowError(detailedErrorMessage, "Application Startup Error");
+            }
+            catch
+            {
+                // Fallback to MessageBox if ErrorDialog fails
+                MessageBox.Show($"Application startup error: {ex.Message}. {ex.StackTrace}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

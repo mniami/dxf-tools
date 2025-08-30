@@ -1,6 +1,11 @@
-﻿using DxfToolLib.Helpers;
+﻿using DxfTool.Models;
+using DxfTool.Services;
+using DxfTool.Views;
+using DxfToolLib.Helpers;
 using Microsoft.Win32;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -9,27 +14,41 @@ namespace DxfTool.ViewModels
     public class MainViewModel : BaseViewModel
     {
         private readonly IDxfParser parser;
+        private readonly IUpdateService updateService;
         private string _dxfFilePath = string.Empty;
         private string _destinationFilePath = string.Empty;
-        private string _statusMessage = "Ready";
+        private string _statusMessage = string.Empty;
         private string _resultsText = string.Empty;
-
-        public MainViewModel(IDxfParser parser)
+        private DataExtractionType _selectedDataType = DataExtractionType.HighPoints;
+        private bool _updateAvailable = false;
+        private string _updateMessage = string.Empty;
+        
+        public MainViewModel(IDxfParser parser, IUpdateService updateService)
         {
             this.parser = parser;
+            this.updateService = updateService;
             InitializeCommands();
+            _ = Task.Run(CheckForUpdatesAsync); // Fire and forget on background thread
         }
 
         public string DxfFilePath
         {
             get => _dxfFilePath;
-            set => SetProperty(ref _dxfFilePath, value);
+            set 
+            { 
+                SetProperty(ref _dxfFilePath, value);
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         public string DestinationFilePath
         {
             get => _destinationFilePath;
-            set => SetProperty(ref _destinationFilePath, value);
+            set 
+            { 
+                SetProperty(ref _destinationFilePath, value);
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
         public string StatusMessage
@@ -44,23 +63,51 @@ namespace DxfTool.ViewModels
             set => SetProperty(ref _resultsText, value);
         }
 
+        public DataExtractionType SelectedDataType
+        {
+            get => _selectedDataType;
+            set 
+            { 
+                SetProperty(ref _selectedDataType, value);
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        public Array DataExtractionTypes => Enum.GetValues(typeof(DataExtractionType));
+
+        public bool UpdateAvailable
+        {
+            get => _updateAvailable;
+            set => SetProperty(ref _updateAvailable, value);
+        }
+
+        public string UpdateMessage
+        {
+            get => _updateMessage;
+            set => SetProperty(ref _updateMessage, value);
+        }
+
         public ICommand BrowseDxfFileCommand { get; private set; } = null!;
         public ICommand BrowseDestinationFileCommand { get; private set; } = null!;
         public ICommand ProcessFileCommand { get; private set; } = null!;
+        public ICommand CheckForUpdatesCommand { get; private set; } = null!;
+        public ICommand InstallUpdateCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
             BrowseDxfFileCommand = new RelayCommand(BrowseDxfFile);
             BrowseDestinationFileCommand = new RelayCommand(BrowseDestinationFile);
             ProcessFileCommand = new RelayCommand(ProcessFile, CanProcessFile);
+            CheckForUpdatesCommand = new RelayCommand(async () => await CheckForUpdatesAsync());
+            InstallUpdateCommand = new RelayCommand(async () => await InstallUpdateAsync(), () => UpdateAvailable);
         }
 
         private void BrowseDxfFile()
         {
             var openFileDialog = new OpenFileDialog
             {
-                Filter = "DXF Files (*.dxf)|*.dxf|All Files (*.*)|*.*",
-                Title = "Select DXF File"
+                Filter = "Pliki DXF (*.dxf)|*.dxf|Wszystkie pliki (*.*)|*.*",
+                Title = "Wybierz plik DXF"
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -73,8 +120,8 @@ namespace DxfTool.ViewModels
         {
             var saveFileDialog = new SaveFileDialog
             {
-                Filter = "Text Files (*.txt)|*.txt|CSV Files (*.csv)|*.csv|All Files (*.*)|*.*",
-                Title = "Select Destination File"
+                Filter = "Pliki tekstowe (*.txt)|*.txt|Pliki CSV (*.csv)|*.csv|Wszystkie pliki (*.*)|*.*",
+                Title = "Wybierz plik docelowy"
             };
 
             if (saveFileDialog.ShowDialog() == true)
@@ -94,30 +141,92 @@ namespace DxfTool.ViewModels
         {
             try
             {
-                StatusMessage = "Processing...";
+                StatusMessage = "Przetwarzanie...";
                 ResultsText = string.Empty;
 
-                var result = parser.FindHighPoints("", DxfFilePath, DestinationFilePath);
+                int result = SelectedDataType switch
+                {
+                    DataExtractionType.HighPoints => parser.FindHighPoints(DxfFilePath, DestinationFilePath),
+                    DataExtractionType.GeometryPoints => parser.FindGeometryPoints(DxfFilePath, DestinationFilePath),
+                    DataExtractionType.GpsCoordinates => parser.FindAllGpsCoords(DxfFilePath, DestinationFilePath),
+                    _ => throw new NotSupportedException($"Typ ekstrakcji danych '{SelectedDataType}' nie jest obsługiwany.")
+                };
                 
-                StatusMessage = "Processing completed successfully";
-                ResultsText = $"Number of high points found: {result}\n" +
-                             $"Source file: {DxfFilePath}\n" +
-                             $"Output file: {DestinationFilePath}";
+                StatusMessage = "Przetwarzanie zakończone pomyślnie";
+                ResultsText = $"Typ ekstrakcji danych: {SelectedDataType.GetDisplayName()}\n" +
+                             $"Liczba znalezionych elementów: {result}\n" +
+                             $"Plik źródłowy: {DxfFilePath}\n" +
+                             $"Plik wyjściowy: {DestinationFilePath}";
 
-                MessageBox.Show($"Processing completed!\nHigh points found: {result}", 
-                               "Success", 
+                MessageBox.Show($"Przetwarzanie zakończone!\nZnaleziono {SelectedDataType.GetDisplayName()}: {result}", 
+                               "Sukces", 
                                MessageBoxButton.OK, 
                                MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                StatusMessage = "Error occurred during processing";
-                ResultsText = $"Error: {ex.Message}";
+                StatusMessage = "Wystąpił błąd podczas przetwarzania";
+                ResultsText = $"Błąd: {ex.Message}";
                 
-                MessageBox.Show($"An error occurred: {ex.Message}", 
-                               "Error", 
-                               MessageBoxButton.OK, 
-                               MessageBoxImage.Error);
+                // Print detailed error to console
+                Console.WriteLine("=== SZCZEGÓŁY BŁĘDU ===");
+                Console.WriteLine($"Czas: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                Console.WriteLine($"Typ błędu: {ex.GetType().Name}");
+                Console.WriteLine($"Wiadomość: {ex.Message}");
+                Console.WriteLine($"Ślad stosu:");
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine("======================");
+                
+                // Create detailed error message for dialog
+                string detailedErrorMessage = $"Typ błędu: {ex.GetType().Name}\n\n" +
+                                            $"Wiadomość: {ex.Message}\n\n" +
+                                            $"Ślad stosu:\n{ex.StackTrace}\n\n" +
+                                            $"Czas: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\n" +
+                                            $"Plik DXF: {DxfFilePath}\n" +
+                                            $"Plik wyjściowy: {DestinationFilePath}\n" +
+                                            $"Typ danych: {SelectedDataType}";
+                
+                // Show custom error dialog that allows copying
+                ErrorDialog.ShowError(detailedErrorMessage, "Błąd przetwarzania");
+            }
+        }
+
+        private async Task CheckForUpdatesAsync()
+        {
+            try
+            {
+                var updateAvailable = await updateService.CheckForUpdatesAsync();
+                UpdateAvailable = updateAvailable;
+                
+                if (updateAvailable)
+                {
+                    var currentVersion = await updateService.GetCurrentVersionAsync();
+                    var latestVersion = await updateService.GetLatestVersionAsync();
+                    UpdateMessage = $"Dostępna aktualizacja: v{latestVersion} (bieżąca: v{currentVersion})";
+                }
+                else
+                {
+                    UpdateMessage = "Masz najnowszą wersję";
+                }
+            }
+            catch (Exception ex)
+            {
+                UpdateMessage = $"Nie udało się sprawdzić aktualizacji: {ex.Message}";
+            }
+        }
+
+        private async Task InstallUpdateAsync()
+        {
+            try
+            {
+                UpdateMessage = "Pobieranie i instalowanie aktualizacji...";
+                await updateService.DownloadAndInstallUpdateAsync();
+            }
+            catch (Exception ex)
+            {
+                UpdateMessage = $"Nie udało się zainstalować aktualizacji: {ex.Message}";
+                MessageBox.Show($"Aktualizacja nie powiodła się: {ex.Message}", "Błąd aktualizacji", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }

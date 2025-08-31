@@ -226,9 +226,9 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="145"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="120"/>
                             </Grid.ColumnDefinitions>
                             
                             <!-- Source File -->
@@ -244,7 +244,7 @@
                                      Background="#F8FAFC"/>
                             
                             <Button Grid.Row="0" Grid.Column="2" 
-                                    Content="Przeglądaj" 
+                                    Content="Wybierz" 
                                     Command="{Binding BrowseDxfFileCommand}"
                                     Style="{StaticResource ModernButton}"
                                     HorizontalAlignment="Stretch"/>
@@ -262,7 +262,7 @@
                                      Background="#F8FAFC"/>
                             
                             <Button Grid.Row="2" Grid.Column="2" 
-                                    Content="Zapisz Jako" 
+                                    Content="Wybierz" 
                                     Command="{Binding BrowseDestinationFileCommand}"
                                     Style="{StaticResource ModernButton}"
                                     HorizontalAlignment="Stretch"/>
@@ -282,6 +282,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="110"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="110"/>
                             </Grid.ColumnDefinitions>
                             
                             <!-- Data Type Selection -->
@@ -316,20 +317,13 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
+                            
+                            <Button Grid.Row="0" Grid.Column="2" 
+                                Content="Rozpocznij" 
+                                    Command="{Binding ProcessFileCommand}"
+                                    Style="{StaticResource SuccessButton}"
+                                    HorizontalAlignment="Center"/>
                         </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Processing Card -->
-                <Border Style="{StaticResource ModernCard}">
-                    <StackPanel>
-                        <TextBlock Text="⚡ Przetwarzanie Danych" Style="{StaticResource SectionHeader}"/>
-                        
-                        <Button Content="{Binding SelectedDataType, Converter={x:Static local:DataTypeToButtonTextConverter.Instance}}" 
-                                Command="{Binding ProcessFileCommand}"
-                                Style="{StaticResource SuccessButton}"
-                                HorizontalAlignment="Center"
-                                MinWidth="250"/>
                     </StackPanel>
                 </Border>
 

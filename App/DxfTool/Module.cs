@@ -9,6 +9,7 @@ namespace DxfTool
         public static void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IUpdateService, UpdateService>();
+            services.AddSingleton<ILoggingService, LoggingService>();
             services.AddSingleton<MainViewModel>();
         }
     }

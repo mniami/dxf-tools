@@ -15,6 +15,7 @@ namespace DxfTool.ViewModels
     {
         private readonly IDxfParser parser;
         private readonly IUpdateService updateService;
+        private readonly ILoggingService logger;
         private string _dxfFilePath = string.Empty;
         private string _destinationFilePath = string.Empty;
         private string _statusMessage = string.Empty;
@@ -23,11 +24,14 @@ namespace DxfTool.ViewModels
         private bool _updateAvailable = false;
         private string _updateMessage = string.Empty;
         
-        public MainViewModel(IDxfParser parser, IUpdateService updateService)
+        public MainViewModel(IDxfParser parser, IUpdateService updateService, ILoggingService logger)
         {
             this.parser = parser;
             this.updateService = updateService;
+            this.logger = logger;
             InitializeCommands();
+            
+            logger.LogInformation("MainViewModel initialized");
             _ = Task.Run(CheckForUpdatesAsync); // Fire and forget on background thread
         }
 
@@ -92,6 +96,7 @@ namespace DxfTool.ViewModels
         public ICommand ProcessFileCommand { get; private set; } = null!;
         public ICommand CheckForUpdatesCommand { get; private set; } = null!;
         public ICommand InstallUpdateCommand { get; private set; } = null!;
+        public ICommand OpenLogFileCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
@@ -100,10 +105,13 @@ namespace DxfTool.ViewModels
             ProcessFileCommand = new RelayCommand(ProcessFile, CanProcessFile);
             CheckForUpdatesCommand = new RelayCommand(async () => await CheckForUpdatesAsync());
             InstallUpdateCommand = new RelayCommand(async () => await InstallUpdateAsync(), () => UpdateAvailable);
+            OpenLogFileCommand = new RelayCommand(() => logger.OpenLogFile());
         }
 
         private void BrowseDxfFile()
         {
+            logger.LogDebug("Opening DXF file browser dialog");
+            
             var openFileDialog = new OpenFileDialog
             {
                 Filter = "Pliki DXF (*.dxf)|*.dxf|Wszystkie pliki (*.*)|*.*",
@@ -113,11 +121,18 @@ namespace DxfTool.ViewModels
             if (openFileDialog.ShowDialog() == true)
             {
                 DxfFilePath = openFileDialog.FileName;
+                logger.LogInformation("DXF file selected: {FilePath}", DxfFilePath);
+            }
+            else
+            {
+                logger.LogDebug("DXF file selection cancelled");
             }
         }
 
         private void BrowseDestinationFile()
         {
+            logger.LogDebug("Opening destination file browser dialog");
+            
             var saveFileDialog = new SaveFileDialog
             {
                 Filter = "Pliki tekstowe (*.txt)|*.txt|Pliki CSV (*.csv)|*.csv|Wszystkie pliki (*.*)|*.*",
@@ -127,6 +142,11 @@ namespace DxfTool.ViewModels
             if (saveFileDialog.ShowDialog() == true)
             {
                 DestinationFilePath = saveFileDialog.FileName;
+                logger.LogInformation("Destination file selected: {FilePath}", DestinationFilePath);
+            }
+            else
+            {
+                logger.LogDebug("Destination file selection cancelled");
             }
         }
 
@@ -141,16 +161,21 @@ namespace DxfTool.ViewModels
         {
             try
             {
+                logger.LogInformation("Starting file processing - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}", 
+                    SelectedDataType, DxfFilePath, DestinationFilePath);
+                
                 StatusMessage = "Przetwarzanie...";
                 ResultsText = string.Empty;
 
                 int result = SelectedDataType switch
                 {
                     DataExtractionType.HighPoints => parser.FindHighPoints(DxfFilePath, DestinationFilePath),
-                    DataExtractionType.GeometryPoints => parser.FindGeometryPoints(DxfFilePath, DestinationFilePath),
+                    DataExtractionType.GeometryPoints => parser.FindPointsWithMultiLeadersSave(DxfFilePath, DestinationFilePath),
                     DataExtractionType.GpsCoordinates => parser.FindAllGpsCoords(DxfFilePath, DestinationFilePath),
                     _ => throw new NotSupportedException($"Typ ekstrakcji danych '{SelectedDataType}' nie jest obsługiwany.")
                 };
+                
+                logger.LogInformation("File processing completed successfully - Found {Count} elements", result);
                 
                 StatusMessage = "Przetwarzanie zakończone pomyślnie";
                 ResultsText = $"Typ ekstrakcji danych: {SelectedDataType.GetDisplayName()}\n" +
@@ -165,10 +190,13 @@ namespace DxfTool.ViewModels
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "File processing failed - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}", 
+                    SelectedDataType, DxfFilePath, DestinationFilePath);
+                
                 StatusMessage = "Wystąpił błąd podczas przetwarzania";
                 ResultsText = $"Błąd: {ex.Message}";
                 
-                // Print detailed error to console
+                // Print detailed error to console (legacy support)
                 Console.WriteLine("=== SZCZEGÓŁY BŁĘDU ===");
                 Console.WriteLine($"Czas: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 Console.WriteLine($"Typ błędu: {ex.GetType().Name}");
@@ -184,7 +212,8 @@ namespace DxfTool.ViewModels
                                             $"Czas: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\n" +
                                             $"Plik DXF: {DxfFilePath}\n" +
                                             $"Plik wyjściowy: {DestinationFilePath}\n" +
-                                            $"Typ danych: {SelectedDataType}";
+                                            $"Typ danych: {SelectedDataType}\n\n" +
+                                            $"Plik logów: {logger.GetLogFilePath()}";
                 
                 // Show custom error dialog that allows copying
                 ErrorDialog.ShowError(detailedErrorMessage, "Błąd przetwarzania");
@@ -195,6 +224,8 @@ namespace DxfTool.ViewModels
         {
             try
             {
+                logger.LogInformation("Checking for updates");
+                
                 var updateAvailable = await updateService.CheckForUpdatesAsync();
                 UpdateAvailable = updateAvailable;
                 
@@ -203,15 +234,20 @@ namespace DxfTool.ViewModels
                     var currentVersion = await updateService.GetCurrentVersionAsync();
                     var latestVersion = await updateService.GetLatestVersionAsync();
                     UpdateMessage = $"Dostępna aktualizacja: v{latestVersion} (bieżąca: v{currentVersion})";
+                    
+                    logger.LogInformation("Update available - Current: {CurrentVersion}, Latest: {LatestVersion}", 
+                        currentVersion, latestVersion);
                 }
                 else
                 {
                     UpdateMessage = "Masz najnowszą wersję";
+                    logger.LogInformation("No updates available");
                 }
             }
             catch (Exception ex)
             {
                 UpdateMessage = $"Nie udało się sprawdzić aktualizacji: {ex.Message}";
+                logger.LogError(ex, "Failed to check for updates");
             }
         }
 
@@ -219,12 +255,15 @@ namespace DxfTool.ViewModels
         {
             try
             {
+                logger.LogInformation("Starting update installation");
                 UpdateMessage = "Pobieranie i instalowanie aktualizacji...";
                 await updateService.DownloadAndInstallUpdateAsync();
+                logger.LogInformation("Update installation completed");
             }
             catch (Exception ex)
             {
                 UpdateMessage = $"Nie udało się zainstalować aktualizacji: {ex.Message}";
+                logger.LogError(ex, "Update installation failed");
                 MessageBox.Show($"Aktualizacja nie powiodła się: {ex.Message}", "Błąd aktualizacji", 
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }

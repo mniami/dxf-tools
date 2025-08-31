@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using DxfToolLib.Schemas;
 using DxfToolLib.Schemas.Core;
+using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace DxfToolLib.Helpers;
 
@@ -17,11 +19,15 @@ internal class DxfParser : IDxfParser
 {
     private readonly ISchemaFinder schemaFinder;
     private readonly IGpsCoordsFinder gpsCoordsFinder;
+    private readonly ILogger<DxfParser>? logger;
 
-    public DxfParser(ISchemaFinder schemaFinder, IGpsCoordsFinder gpsCoordsFinder)
+    public DxfParser(ISchemaFinder schemaFinder, IGpsCoordsFinder gpsCoordsFinder, ILogger<DxfParser>? logger = null)
     {
         this.schemaFinder = schemaFinder;
         this.gpsCoordsFinder = gpsCoordsFinder;
+        this.logger = logger;
+        
+        logger?.LogDebug("DxfParser initialized");
     }
 
     private static DxfDocument? LoadUsingNetDxf(string filePath)
@@ -33,9 +39,9 @@ internal class DxfParser : IDxfParser
         return DxfDocument.Load(filePath);
     }
 
-    private string[] FindGeometryPointsSchema(string[] inputLines)
+    private string[] FindPointWithMultiLeaderSchema(string[] inputLines)
     {
-        var schemaKey = KnownSchemas.GeometryPointAutocad2004;
+        var schemaKey = KnownSchemas.PointWithMultiLeader;
         var schemaName = schemaKey.NAME;
         var dictionary = new Dictionary<string, string> {};
         return schemaFinder.Matches(schemaName, dictionary, inputLines);
@@ -123,31 +129,30 @@ internal class DxfParser : IDxfParser
 
     public int OperateOnAFile(string filePath, string outputPath, Func<int, string[], string[]> function)
     {
-        var header = File.ReadLines(filePath).Take(20).ToArray();
-        var dxfEncoding = GetEncoding(header, Encoding.Default);
-        var inputLines = File.ReadAllLines(filePath, dxfEncoding);
-        var dxfVersion = GetVersion(header);
-
-        var outputLines = function(dxfVersion, inputLines);
-
-        File.WriteAllLines(
-            outputPath,
-            outputLines
-        );
-        return outputLines.Length;
-    }
-
-    public string[] FindGeometryPoints(int dxfVersion, string[] inputLines)
-    {
-        return FindGeometryPointsSchema(inputLines);
-    }
-
-    public int FindGeometryPoints(string filePath, string outputPath)
-    {
-        return OperateOnAFile(filePath, outputPath, (dxfVersion, input) =>
+        logger?.LogInformation("Starting file operation - Input: {InputFile}, Output: {OutputFile}", filePath, outputPath);
+        
+        try
         {
-            return FindGeometryPoints(dxfVersion, input);
-        });
+            var header = File.ReadLines(filePath).Take(20).ToArray();
+            var dxfEncoding = GetEncoding(header, Encoding.Default);
+            var inputLines = File.ReadAllLines(filePath, dxfEncoding);
+            var dxfVersion = GetVersion(header);
+
+            logger?.LogDebug("File loaded - Version: {Version}, Encoding: {Encoding}, Lines: {LineCount}", 
+                dxfVersion, dxfEncoding.EncodingName, inputLines.Length);
+
+            var outputLines = function(dxfVersion, inputLines);
+
+            File.WriteAllLines(outputPath, outputLines);
+            
+            logger?.LogInformation("File operation completed - Output lines: {OutputCount}", outputLines.Length);
+            return outputLines.Length;
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex, "File operation failed - Input: {InputFile}, Output: {OutputFile}", filePath, outputPath);
+            throw;
+        }
     }
 
     public int FindHighPoints(string dxfHighPointName, string filePath, string outputPath)
@@ -188,5 +193,18 @@ internal class DxfParser : IDxfParser
             }
             throw new Exception($"Tej wersji AutoCad {dxfVersion} nie obsługujemy. Program wspiera wersje do 1015 włącznie");
         });
+    }
+
+    public int FindPointsWithMultiLeadersSave(string filePath, string outputPath)
+    {
+        return OperateOnAFile(filePath, outputPath, (dxfVersion, input) =>
+        {
+            return FindPointsWithMultiLeaders(dxfVersion, input);
+        });
+    }
+
+    public string[] FindPointsWithMultiLeaders(int dxfVersion, string[] inputLines)
+    {
+        return FindPointWithMultiLeaderSchema(inputLines);
     }
 }

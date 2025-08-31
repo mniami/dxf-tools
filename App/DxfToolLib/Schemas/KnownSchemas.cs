@@ -14,9 +14,9 @@
         public readonly string NAME = "HIGH_POINT_AUTO_CAD_2004";
         public readonly HighPointAutoCad2000FieldsMetadata FIELDS = new();
     }
-    public class GeometryPointAutoCad2004Metadata
+    public class PointWithMultiLeaderMetadata
     {
-        public readonly string NAME = "GEOMETRY_POINT_AUTO_CAD_2004";
+        public readonly string NAME = "POINT_WITH_MULTILEADER";
     }
     public class CodePageMetadata
     {
@@ -34,10 +34,9 @@
     {
         public static readonly HighPointAutoCad2000Metadata HighPointAutoCad2000 = new();
         public static readonly HighPointAutoCad2004Metadata HighPointAutoCad2004 = new();
-        public static readonly GeometryPointAutoCad2004Metadata GeometryPointAutoCad2004 = new();
+        public static readonly PointWithMultiLeaderMetadata PointWithMultiLeader = new();
         public static readonly CodePageMetadata CodePage = new();
         public static readonly CadVersionMetadata CadVersion= new();
         public static readonly GpsCoordsMetadata GpsCoords = new();
-        public static readonly GeometryPointAutoCad2004Metadata GeometryPointAutocad2004 = new();
     }
 }

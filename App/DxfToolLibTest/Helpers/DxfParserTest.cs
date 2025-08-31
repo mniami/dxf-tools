@@ -146,4 +146,15 @@ AcDbText", @"6533599.54,5931087.52,9.032")]
         
         return Verify(outputLines);
     }
+
+    [Theory]
+    [InlineData("Resources\\geometry-point.dxf")]
+    public Task ParsePointsWithMultiLeadersTest(string filePath)
+    {
+        var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", filePath);
+        var inputLines = File.ReadAllLines(fullPath, System.Text.Encoding.UTF8);
+
+        var multiLeaders = parser.FindPointsWithMultiLeaders(1014, inputLines);
+        return Verify(multiLeaders);
+    }
 }

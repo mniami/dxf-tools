@@ -82,25 +82,6 @@ namespace DxfTool.Views
         }
     }
 
-    public class DataTypeToButtonTextConverter : IValueConverter
-    {
-        public static readonly DataTypeToButtonTextConverter Instance = new();
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is DataExtractionType dataType)
-            {
-                return $"{dataType.GetIcon()} Extract {dataType.GetDisplayName()} from DXF File";
-            }
-            return "🔍 Process DXF File";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class StringToVisibilityConverter : IValueConverter
     {
         public static readonly StringToVisibilityConverter Instance = new();

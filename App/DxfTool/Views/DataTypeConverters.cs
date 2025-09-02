@@ -82,6 +82,25 @@ namespace DxfTool.Views
         }
     }
 
+    public class GeometryPointsVisibilityConverter : IValueConverter
+    {
+        public static readonly GeometryPointsVisibilityConverter Instance = new();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is DataExtractionType dataType)
+            {
+                return dataType == DataExtractionType.GeometryPoints ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class StringToVisibilityConverter : IValueConverter
     {
         public static readonly StringToVisibilityConverter Instance = new();

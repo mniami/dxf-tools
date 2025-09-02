@@ -26,7 +26,7 @@ namespace DxfToolLib.Helpers
             {
                 yield break;
             }
-            foreach (var match in matches)
+            foreach (var match in matches.CombineMatches())
             {
                 var groups = match.Split(',');
                 var longitude = float.Parse(groups[0], CultureInfo.InvariantCulture);

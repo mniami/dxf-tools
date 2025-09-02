@@ -19,12 +19,10 @@ namespace DxfToolLib.Helpers
             this.schemaStorage = schemaStorage;
             this.matchesFinder = matchesFinder;
         }
-        public string[] Matches(string schemaName, Dictionary<string, string>? variables, string[] input)
+        public string[][] Matches(string schemaName, Dictionary<string, string>? variables, string[] input)
         {
             var schemaItems = schemaStorage.GetSchemaItemsByName(schemaName, variables);
-            return matchesFinder.GetFoundMatches(schemaItems, input)
-                .Select(item => string.Join(",", item))
-                .ToArray();
+            return matchesFinder.GetFoundMatches(schemaItems, input);
         }
     }
 }

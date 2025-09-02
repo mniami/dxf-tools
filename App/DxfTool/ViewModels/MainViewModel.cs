@@ -17,6 +17,7 @@ namespace DxfTool.ViewModels
         private readonly IUpdateService updateService;
         private readonly ILoggingService logger;
         private string _dxfFilePath = string.Empty;
+        private string _soundPlanFilePath = string.Empty;
         private string _destinationFilePath = string.Empty;
         private string _statusMessage = string.Empty;
         private string _resultsText = string.Empty;
@@ -41,6 +42,16 @@ namespace DxfTool.ViewModels
             set 
             { 
                 SetProperty(ref _dxfFilePath, value);
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        public string SoundPlanFilePath
+        {
+            get => _soundPlanFilePath;
+            set 
+            { 
+                SetProperty(ref _soundPlanFilePath, value);
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -92,6 +103,7 @@ namespace DxfTool.ViewModels
         }
 
         public ICommand BrowseDxfFileCommand { get; private set; } = null!;
+        public ICommand BrowseSoundPlanFileCommand { get; private set; } = null!;
         public ICommand BrowseDestinationFileCommand { get; private set; } = null!;
         public ICommand ProcessFileCommand { get; private set; } = null!;
         public ICommand CheckForUpdatesCommand { get; private set; } = null!;
@@ -101,6 +113,7 @@ namespace DxfTool.ViewModels
         private void InitializeCommands()
         {
             BrowseDxfFileCommand = new RelayCommand(BrowseDxfFile);
+            BrowseSoundPlanFileCommand = new RelayCommand(BrowseSoundPlanFile);
             BrowseDestinationFileCommand = new RelayCommand(BrowseDestinationFile);
             ProcessFileCommand = new RelayCommand(ProcessFile, CanProcessFile);
             CheckForUpdatesCommand = new RelayCommand(async () => await CheckForUpdatesAsync());
@@ -129,6 +142,27 @@ namespace DxfTool.ViewModels
             }
         }
 
+        private void BrowseSoundPlanFile()
+        {
+            logger.LogDebug("Opening SoundPlan file browser dialog");
+            
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Pliki tekstowe (*.txt)|*.txt|Wszystkie pliki (*.*)|*.*",
+                Title = "Wybierz plik SoundPlan"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                SoundPlanFilePath = openFileDialog.FileName;
+                logger.LogInformation("SoundPlan file selected: {FilePath}", SoundPlanFilePath);
+            }
+            else
+            {
+                logger.LogDebug("SoundPlan file selection cancelled");
+            }
+        }
+
         private void BrowseDestinationFile()
         {
             logger.LogDebug("Opening destination file browser dialog");
@@ -152,17 +186,27 @@ namespace DxfTool.ViewModels
 
         private bool CanProcessFile()
         {
-            return !string.IsNullOrWhiteSpace(DxfFilePath) && 
-                   !string.IsNullOrWhiteSpace(DestinationFilePath) &&
-                   File.Exists(DxfFilePath);
+            bool basicValidation = !string.IsNullOrWhiteSpace(DxfFilePath) && 
+                                 !string.IsNullOrWhiteSpace(DestinationFilePath) &&
+                                 File.Exists(DxfFilePath);
+
+            // If GeometryPoints is selected, also require SoundPlan file
+            if (SelectedDataType == DataExtractionType.GeometryPoints)
+            {
+                return basicValidation && 
+                       !string.IsNullOrWhiteSpace(SoundPlanFilePath) && 
+                       File.Exists(SoundPlanFilePath);
+            }
+
+            return basicValidation;
         }
 
         private void ProcessFile()
         {
             try
             {
-                logger.LogInformation("Starting file processing - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}", 
-                    SelectedDataType, DxfFilePath, DestinationFilePath);
+                logger.LogInformation("Starting file processing - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}, SoundPlan: {SoundPlanFile}", 
+                    SelectedDataType, DxfFilePath, DestinationFilePath, SoundPlanFilePath ?? "N/A");
                 
                 StatusMessage = "Przetwarzanie...";
                 ResultsText = string.Empty;
@@ -170,18 +214,24 @@ namespace DxfTool.ViewModels
                 int result = SelectedDataType switch
                 {
                     DataExtractionType.HighPoints => parser.FindHighPoints(DxfFilePath, DestinationFilePath),
-                    DataExtractionType.GeometryPoints => parser.FindPointsWithMultiLeadersSave(DxfFilePath, DestinationFilePath),
-                    DataExtractionType.GpsCoordinates => parser.FindAllGpsCoords(DxfFilePath, DestinationFilePath),
+                    DataExtractionType.GeometryPoints => parser.FindPointsWithMultiLeadersSave(DxfFilePath, SoundPlanFilePath ?? string.Empty, DestinationFilePath),
                     _ => throw new NotSupportedException($"Typ ekstrakcji danych '{SelectedDataType}' nie jest obsługiwany.")
                 };
                 
                 logger.LogInformation("File processing completed successfully - Found {Count} elements", result);
                 
                 StatusMessage = "Przetwarzanie zakończone pomyślnie";
-                ResultsText = $"Typ ekstrakcji danych: {SelectedDataType.GetDisplayName()}\n" +
-                             $"Liczba znalezionych elementów: {result}\n" +
-                             $"Plik źródłowy: {DxfFilePath}\n" +
-                             $"Plik wyjściowy: {DestinationFilePath}";
+                var resultText = $"Typ ekstrakcji danych: {SelectedDataType.GetDisplayName()}\n" +
+                               $"Liczba znalezionych elementów: {result}\n" +
+                               $"Plik źródłowy DXF: {DxfFilePath}\n";
+                
+                if (SelectedDataType == DataExtractionType.GeometryPoints && !string.IsNullOrWhiteSpace(SoundPlanFilePath))
+                {
+                    resultText += $"Plik SoundPlan: {SoundPlanFilePath}\n";
+                }
+                
+                resultText += $"Plik wyjściowy: {DestinationFilePath}";
+                ResultsText = resultText;
 
                 MessageBox.Show($"Przetwarzanie zakończone!\nZnaleziono {SelectedDataType.GetDisplayName()}: {result}", 
                                "Sukces", 
@@ -190,8 +240,8 @@ namespace DxfTool.ViewModels
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "File processing failed - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}", 
-                    SelectedDataType, DxfFilePath, DestinationFilePath);
+                logger.LogError(ex, "File processing failed - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}, SoundPlan: {SoundPlanFile}", 
+                    SelectedDataType, DxfFilePath, DestinationFilePath, SoundPlanFilePath ?? "N/A");
                 
                 StatusMessage = "Wystąpił błąd podczas przetwarzania";
                 ResultsText = $"Błąd: {ex.Message}";
@@ -211,6 +261,7 @@ namespace DxfTool.ViewModels
                                             $"Ślad stosu:\n{ex.StackTrace}\n\n" +
                                             $"Czas: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\n" +
                                             $"Plik DXF: {DxfFilePath}\n" +
+                                            $"Plik SoundPlan: {SoundPlanFilePath ?? "N/A"}\n" +
                                             $"Plik wyjściowy: {DestinationFilePath}\n" +
                                             $"Typ danych: {SelectedDataType}\n\n" +
                                             $"Plik logów: {logger.GetLogFilePath()}";

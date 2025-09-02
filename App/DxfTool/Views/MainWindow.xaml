@@ -211,64 +211,6 @@
         <!-- Main Content -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="15">
             <StackPanel MaxWidth="750">
-                
-                <!-- File Selection Card -->
-                <Border Style="{StaticResource ModernCard}">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBlock Text="📁 Wybór Pliku" Style="{StaticResource SectionHeader}"/>
-                        </StackPanel>
-                        
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="8"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="145"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="120"/>
-                            </Grid.ColumnDefinitions>
-                            
-                            <!-- Source File -->
-                            <Label Grid.Row="0" Grid.Column="0" 
-                                   Content="📄 Plik Źródłowy DXF:" 
-                                   Style="{StaticResource ModernLabel}"/>
-                            
-                            <TextBox Grid.Row="0" Grid.Column="1" 
-                                     Name="txtDxfFilePath"
-                                     Text="{Binding DxfFilePath, UpdateSourceTrigger=PropertyChanged}" 
-                                     Style="{StaticResource ModernTextBox}"
-                                     IsReadOnly="True"
-                                     Background="#F8FAFC"/>
-                            
-                            <Button Grid.Row="0" Grid.Column="2" 
-                                    Content="Wybierz" 
-                                    Command="{Binding BrowseDxfFileCommand}"
-                                    Style="{StaticResource ModernButton}"
-                                    HorizontalAlignment="Stretch"/>
-
-                            <!-- Output File -->
-                            <Label Grid.Row="2" Grid.Column="0" 
-                                   Content="💾 Plik Wyjściowy:" 
-                                   Style="{StaticResource ModernLabel}"/>
-                            
-                            <TextBox Grid.Row="2" Grid.Column="1" 
-                                     Name="txtDestinationFilePath"
-                                     Text="{Binding DestinationFilePath, UpdateSourceTrigger=PropertyChanged}" 
-                                     Style="{StaticResource ModernTextBox}"
-                                     IsReadOnly="True"
-                                     Background="#F8FAFC"/>
-                            
-                            <Button Grid.Row="2" Grid.Column="2" 
-                                    Content="Wybierz" 
-                                    Command="{Binding BrowseDestinationFileCommand}"
-                                    Style="{StaticResource ModernButton}"
-                                    HorizontalAlignment="Stretch"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
 
                 <!-- Data Type Selection Card -->
                 <Border Style="{StaticResource ModernCard}">
@@ -323,6 +265,87 @@
                                     Command="{Binding ProcessFileCommand}"
                                     Style="{StaticResource SuccessButton}"
                                     HorizontalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- File Selection Card -->
+                <Border Style="{StaticResource ModernCard}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="📁 Wybór Pliku" Style="{StaticResource SectionHeader}"/>
+                        </StackPanel>
+                        
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="145"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Source File -->
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Content="📄 Plik Źródłowy DXF:" 
+                                   Style="{StaticResource ModernLabel}"/>
+                            
+                            <TextBox Grid.Row="0" Grid.Column="1" 
+                                     Name="txtDxfFilePath"
+                                     Text="{Binding DxfFilePath, UpdateSourceTrigger=PropertyChanged}" 
+                                     Style="{StaticResource ModernTextBox}"
+                                     IsReadOnly="True"
+                                     Background="#F8FAFC"/>
+                            
+                            <Button Grid.Row="0" Grid.Column="2" 
+                                    Content="Wybierz" 
+                                    Command="{Binding BrowseDxfFileCommand}"
+                                    Style="{StaticResource ModernButton}"
+                                    HorizontalAlignment="Stretch"/>
+
+                            <!-- SoundPlan File - only visible for GeometryPoints -->
+                            <Label Grid.Row="2" Grid.Column="0" 
+                                   Content="🔊 Plik SoundPlan:" 
+                                   Style="{StaticResource ModernLabel}"
+                                   Visibility="{Binding SelectedDataType, Converter={x:Static local:GeometryPointsVisibilityConverter.Instance}}"/>
+                            
+                            <TextBox Grid.Row="2" Grid.Column="1" 
+                                     Name="txtSoundPlanFilePath"
+                                     Text="{Binding SoundPlanFilePath, UpdateSourceTrigger=PropertyChanged}" 
+                                     Style="{StaticResource ModernTextBox}"
+                                     IsReadOnly="True"
+                                     Background="#F8FAFC"
+                                     Visibility="{Binding SelectedDataType, Converter={x:Static local:GeometryPointsVisibilityConverter.Instance}}"/>
+                            
+                            <Button Grid.Row="2" Grid.Column="2" 
+                                    Content="Wybierz" 
+                                    Command="{Binding BrowseSoundPlanFileCommand}"
+                                    Style="{StaticResource ModernButton}"
+                                    HorizontalAlignment="Stretch"
+                                    Visibility="{Binding SelectedDataType, Converter={x:Static local:GeometryPointsVisibilityConverter.Instance}}"/>
+
+                            <!-- Output File -->
+                            <Label Grid.Row="4" Grid.Column="0" 
+                                   Content="💾 Plik Wyjściowy:" 
+                                   Style="{StaticResource ModernLabel}"/>
+                            
+                            <TextBox Grid.Row="4" Grid.Column="1" 
+                                     Name="txtDestinationFilePath"
+                                     Text="{Binding DestinationFilePath, UpdateSourceTrigger=PropertyChanged}" 
+                                     Style="{StaticResource ModernTextBox}"
+                                     IsReadOnly="True"
+                                     Background="#F8FAFC"/>
+                            
+                            <Button Grid.Row="4" Grid.Column="2" 
+                                    Content="Wybierz" 
+                                    Command="{Binding BrowseDestinationFileCommand}"
+                                    Style="{StaticResource ModernButton}"
+                                    HorizontalAlignment="Stretch"/>
                         </Grid>
                     </StackPanel>
                 </Border>

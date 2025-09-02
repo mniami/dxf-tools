@@ -10,7 +10,6 @@ namespace DxfTool.Models
     {
         HighPoints,
         GeometryPoints,
-        GpsCoordinates
     }
 
     public static class DataExtractionTypeExtensions
@@ -19,9 +18,8 @@ namespace DxfTool.Models
         {
             return type switch
             {
-                DataExtractionType.HighPoints => "Punkty Wysokościowe",
-                DataExtractionType.GeometryPoints => "Punkty Geometryczne", 
-                DataExtractionType.GpsCoordinates => "Współrzędne GPS",
+                DataExtractionType.HighPoints => "Generowanie rzędnych",
+                DataExtractionType.GeometryPoints => "Importowanie rzędnych z opisem",
                 _ => type.ToString()
             };
         }
@@ -30,9 +28,8 @@ namespace DxfTool.Models
         {
             return type switch
             {
-                DataExtractionType.HighPoints => "Wyodrębnij punkty wysokościowe z pliku DXF",
-                DataExtractionType.GeometryPoints => "Wyodrębnij punkty geometryczne z pliku DXF",
-                DataExtractionType.GpsCoordinates => "Wyodrębnij współrzędne GPS z pliku DXF",
+                DataExtractionType.HighPoints => "Generuj rzędne wysokościowe",
+                DataExtractionType.GeometryPoints => "Importuj rzędne geometryczne z opisem wraz z danymi z SoundPlan",
                 _ => "Nieznany typ danych"
             };
         }
@@ -43,7 +40,6 @@ namespace DxfTool.Models
             {
                 DataExtractionType.HighPoints => "🏔️",
                 DataExtractionType.GeometryPoints => "📐",
-                DataExtractionType.GpsCoordinates => "🌍",
                 _ => "📊"
             };
         }

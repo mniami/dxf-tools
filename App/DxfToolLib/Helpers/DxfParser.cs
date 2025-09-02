@@ -12,6 +12,7 @@ using DxfToolLib.Schemas;
 using DxfToolLib.Schemas.Core;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using System.ComponentModel;
 
 namespace DxfToolLib.Helpers;
 
@@ -39,12 +40,24 @@ internal class DxfParser : IDxfParser
         return DxfDocument.Load(filePath);
     }
 
-    private string[] FindPointWithMultiLeaderSchema(string[] inputLines)
+    private string[] FindPointWithMultiLeaderSchema(string[] inputLines, string[] soundPlanLines)
     {
         var schemaKey = KnownSchemas.PointWithMultiLeader;
         var schemaName = schemaKey.NAME;
-        var dictionary = new Dictionary<string, string> {};
-        return schemaFinder.Matches(schemaName, dictionary, inputLines);
+        var dictionary = new Dictionary<string, string> { };
+        var data = schemaFinder.Matches(schemaName, dictionary, inputLines);
+        var dxfInSoundPlanFormat = data.Select(itemData =>
+        {
+            var x = itemData[0].ToSoundPlanGpsCoordinateFormat();
+            var y = itemData[1].ToSoundPlanGpsCoordinateFormat();
+            var description = itemData[4];
+
+            return new DxfPoint { Latitude = x, Longitude = y, Description = description };
+        });
+        var soundPlanData = soundPlanLines.MapDxfToSoundPlan();
+        
+        // Use the dedicated mapper to match DXF points with SoundPlan data
+        return DxfSoundPlanMapper.MatchAndFormat(dxfInSoundPlanFormat, soundPlanData);
     }
 
     private string[] FindHighPointsSchema1(string dxfHighPointName, string[] inputLines)
@@ -54,7 +67,7 @@ internal class DxfParser : IDxfParser
         var dictionary = new Dictionary<string, string> {
             { schemaKey.FIELDS.TITLE, dxfHighPointName },
         };
-        return schemaFinder.Matches(schemaName, dictionary, inputLines);
+        return schemaFinder.Matches(schemaName, dictionary, inputLines).CombineMatches();
     }
 
     private string[] FindHighPointsSchema2(string dxfHighPointName, string[] inputLines)
@@ -64,7 +77,7 @@ internal class DxfParser : IDxfParser
         var dictionary = new Dictionary<string, string> {
             { schemaKey.FIELDS.TITLE, dxfHighPointName },
         };
-        return schemaFinder.Matches(schemaName, dictionary, inputLines);
+        return schemaFinder.Matches(schemaName, dictionary, inputLines).CombineMatches();
     }
 
     public string[] FindHighPoints(int dxfVersion, string dxfHighPointName, string[] inputLines)
@@ -89,7 +102,7 @@ internal class DxfParser : IDxfParser
 
     public Encoding GetEncoding(string[] inputLines, Encoding defaultEncoding)
     {
-        var matches = schemaFinder.Matches(KnownSchemas.CodePage.NAME, null, inputLines);
+        var matches = schemaFinder.Matches(KnownSchemas.CodePage.NAME, null, inputLines).CombineMatches();
         var encodingName = matches.FirstOrDefault();
 
         if (encodingName == null)
@@ -114,7 +127,7 @@ internal class DxfParser : IDxfParser
 
     public int GetVersion(string[] inputLines, int defaultValue = 0)
     {
-        var matches = schemaFinder.Matches(KnownSchemas.CadVersion.NAME, null, inputLines);
+        var matches = schemaFinder.Matches(KnownSchemas.CadVersion.NAME, null, inputLines).CombineMatches();
         var versionName = matches.FirstOrDefault();
         if (versionName == null)
         {
@@ -189,22 +202,23 @@ internal class DxfParser : IDxfParser
             if (dxfVersion > 1015)
             {
                 var coords = gpsCoordsFinder.Find(input, KnownGpsCoords.Poland.Min, KnownGpsCoords.Poland.Max);
-                return coords.Select(coords => $"{coords.Longitude},{coords.Latitude},{coords.Height}").ToArray();
+                return [.. coords.Select(coords => $"{coords.Longitude},{coords.Latitude},{coords.Height}")];
             }
             throw new Exception($"Tej wersji AutoCad {dxfVersion} nie obsługujemy. Program wspiera wersje do 1015 włącznie");
         });
     }
 
-    public int FindPointsWithMultiLeadersSave(string filePath, string outputPath)
+    public int FindPointsWithMultiLeadersSave(string dxfFilePath, string soundPlanFilePath, string outputPath)
     {
-        return OperateOnAFile(filePath, outputPath, (dxfVersion, input) =>
+        var soundPlanLines = File.ReadLines(soundPlanFilePath).ToArray();
+        return OperateOnAFile(dxfFilePath, outputPath, (dxfVersion, input) =>
         {
-            return FindPointsWithMultiLeaders(dxfVersion, input);
+            return FindPointsWithMultiLeaders(dxfVersion, input, soundPlanLines);
         });
     }
 
-    public string[] FindPointsWithMultiLeaders(int dxfVersion, string[] inputLines)
+    public string[] FindPointsWithMultiLeaders(int dxfVersion, string[] inputLines, string[] soundPlanLines)
     {
-        return FindPointWithMultiLeaderSchema(inputLines);
+        return FindPointWithMultiLeaderSchema(inputLines, soundPlanLines);
     }
 }

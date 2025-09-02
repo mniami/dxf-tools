@@ -16,8 +16,8 @@ namespace DxfTool.Services
         
         public bool IsUpdateAvailable { get; private set; }
 
-        // TODO: Replace with your actual website URL
-        private const string UpdateApiUrl = "https://your-website.com/updates/latest.json";
+        // Updated with actual website URL
+        private const string UpdateApiUrl = "https://tools.echoton.pl/dxf/updates/latest.json";
 
         public async Task<bool> CheckForUpdatesAsync()
         {
@@ -58,7 +58,7 @@ namespace DxfTool.Services
             try
             {
                 // Open your website download page
-                var downloadUrl = _downloadUrl ?? "https://your-website.com";
+                var downloadUrl = _downloadUrl ?? "https://tools.echoton.pl/dxf";
                 Process.Start(new ProcessStartInfo(downloadUrl) { UseShellExecute = true });
                 
                 MessageBox.Show($"A new version (v{_latestVersion}) is available!\n\nYour browser will open the download page.\nDownload and run the new installer to update.", 
@@ -77,7 +77,7 @@ namespace DxfTool.Services
         public Task<string> GetCurrentVersionAsync()
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            return Task.FromResult(version?.ToString(3) ?? "1.0.12"); // Return only major.minor.patch
+            return Task.FromResult(version?.ToString(3) ?? "1.0.17"); // Return only major.minor.patch
         }
 
         public Task<string> GetLatestVersionAsync()

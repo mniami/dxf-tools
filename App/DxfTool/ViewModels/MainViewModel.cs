@@ -277,12 +277,12 @@ namespace DxfTool.ViewModels
             {
                 logger.LogInformation("Checking for updates");
                 
+                var currentVersion = await updateService.GetCurrentVersionAsync();
                 var updateAvailable = await updateService.CheckForUpdatesAsync();
                 UpdateAvailable = updateAvailable;
                 
                 if (updateAvailable)
                 {
-                    var currentVersion = await updateService.GetCurrentVersionAsync();
                     var latestVersion = await updateService.GetLatestVersionAsync();
                     UpdateMessage = $"Dostępna aktualizacja: v{latestVersion} (bieżąca: v{currentVersion})";
                     
@@ -291,13 +291,14 @@ namespace DxfTool.ViewModels
                 }
                 else
                 {
-                    UpdateMessage = "Masz najnowszą wersję";
+                    UpdateMessage = $"Masz najnowszą wersję: v{currentVersion}";
                     logger.LogInformation("No updates available");
                 }
             }
             catch (Exception ex)
             {
-                UpdateMessage = $"Nie udało się sprawdzić aktualizacji: {ex.Message}";
+                var currentVersion = await updateService.GetCurrentVersionAsync();
+                UpdateMessage = $"Nie udało się sprawdzić aktualizacji: {ex.Message} (bieżąca: v{currentVersion})";
                 logger.LogError(ex, "Failed to check for updates");
             }
         }

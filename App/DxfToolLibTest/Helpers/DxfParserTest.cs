@@ -154,7 +154,7 @@ AcDbText", @"6533599.54,5931087.52,9.032")]
         var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", filePath);
         var inputLines = File.ReadAllLines(fullPath, System.Text.Encoding.UTF8);
 
-        var multiLeaders = parser.FindPointsWithMultiLeaders(1014, inputLines);
+        var multiLeaders = parser.FindPointsWithMultiLeaders(1014, inputLines, new string[0]);
         return Verify(multiLeaders);
     }
 }

@@ -17,12 +17,12 @@ namespace DxfToolAutoCAD.Services
     public class SoundPlanImportService : ISoundPlanImportService
     {
         private readonly ILogger<SoundPlanImportService> _logger;
-        private readonly IDxfParser _dxfParser;
+        private readonly IDxfService _dxfService;
 
-        public SoundPlanImportService(ILogger<SoundPlanImportService> logger, IDxfParser dxfParser)
+        public SoundPlanImportService(ILogger<SoundPlanImportService> logger, IDxfService dxfService)
         {
             _logger = logger;
-            _dxfParser = dxfParser;
+            _dxfService = dxfService;
         }
 
 #if AUTOCAD_API_AVAILABLE
@@ -55,13 +55,13 @@ namespace DxfToolAutoCAD.Services
 
                 // Parse SoundPlan data using existing DxfToolLib functionality
                 // This is where you'll integrate with your existing parser
-                var soundPlanData = ParseSoundPlanFile(soundPlanLines);
-                _logger.LogInformation("Parsed {DataCount} SoundPlan data points", soundPlanData.Count);
+                var soundPlanPoint = ParseSoundPlanFile(soundPlanLines);
+                _logger.LogInformation("Parsed {DataCount} SoundPlan data points", soundPlanPoint.Count);
 
                 int entitiesAdded = 0;
 
                 // Create AutoCAD entities for each SoundPlan data point
-                foreach (var dataPoint in soundPlanData)
+                foreach (var dataPoint in soundPlanPoint)
                 {
                     var entities = CreateAutoCADEntitiesFromSoundPlanData(dataPoint, coordinateTransform);
                     

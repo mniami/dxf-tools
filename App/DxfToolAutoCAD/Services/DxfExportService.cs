@@ -53,13 +53,13 @@ namespace DxfToolAutoCAD
                 _logger.LogInformation("Read {LineCount} lines from SoundPlan file", soundPlanLines.Length);
 
                 // Parse SoundPlan data using existing DxfToolLib logic
-                var soundPlanData = ParseSoundPlanData(soundPlanLines);
-                _logger.LogInformation("Parsed {DataCount} SoundPlan entries", soundPlanData.Count);
+                var soundPlanPoint = ParseSoundPlanData(soundPlanLines);
+                _logger.LogInformation("Parsed {DataCount} SoundPlan entries", soundPlanPoint.Count);
 
                 // Apply coordinate transformation if specified
                 if (coordinateTransform != null)
                 {
-                    ApplyCoordinateTransform(soundPlanData, coordinateTransform);
+                    ApplyCoordinateTransform(soundPlanPoint, coordinateTransform);
                 }
 
                 // Add entities to AutoCAD
@@ -68,7 +68,7 @@ namespace DxfToolAutoCAD
                 {
                     var modelSpace = transaction.GetObject(targetModelSpace.ObjectId, OpenMode.ForWrite) as BlockTableRecord;
 
-                    foreach (var data in soundPlanData)
+                    foreach (var data in soundPlanPoint)
                     {
                         try
                         {
@@ -102,9 +102,9 @@ namespace DxfToolAutoCAD
         /// <summary>
         /// Parse SoundPlan file lines into structured data
         /// </summary>
-        private List<SoundPlanData> ParseSoundPlanData(string[] lines)
+        private List<SoundPlanPoint> ParseSoundPlanData(string[] lines)
         {
-            var result = new List<SoundPlanData>();
+            var result = new List<SoundPlanPoint>();
             
             // Skip header line if present
             int startIndex = lines.Length > 0 && (lines[0].Contains("Latitude") || lines[0].Contains("Idx")) ? 1 : 0;
@@ -119,7 +119,7 @@ namespace DxfToolAutoCAD
                     var parts = line.Split('\t', StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length >= 6) // Ensure we have enough columns
                     {
-                        var data = new SoundPlanData
+                        var data = new SoundPlanPoint
                         {
                             Idx = int.TryParse(parts[0], out int idx) ? idx : i,
                             Latitude = parts[1],
@@ -144,9 +144,9 @@ namespace DxfToolAutoCAD
         /// <summary>
         /// Apply coordinate transformation to SoundPlan data
         /// </summary>
-        private void ApplyCoordinateTransform(List<SoundPlanData> soundPlanData, CoordinateTransformOptions transform)
+        private void ApplyCoordinateTransform(List<SoundPlanPoint> soundPlanPoint, CoordinateTransformOptions transform)
         {
-            foreach (var data in soundPlanData)
+            foreach (var data in soundPlanPoint)
             {
                 if (double.TryParse(data.Latitude, out double lat) && 
                     double.TryParse(data.Longitude, out double lon) &&
@@ -178,7 +178,7 @@ namespace DxfToolAutoCAD
         /// <summary>
         /// Create AutoCAD entities from SoundPlan data
         /// </summary>
-        private List<Entity> CreateEntitiesFromSoundPlanData(SoundPlanData data)
+        private List<Entity> CreateEntitiesFromSoundPlanData(SoundPlanPoint data)
         {
             var entities = new List<Entity>();
 

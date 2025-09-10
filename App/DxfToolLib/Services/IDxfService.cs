@@ -1,7 +1,7 @@
 ﻿
 namespace DxfToolLib.Helpers
 {
-    public interface IDxfParser
+    public interface IDxfService
     {
         int FindHighPoints(string filePath, string outputPath);
         int FindHighPoints(string dxfHighPointName, string filePath, string outputPath);

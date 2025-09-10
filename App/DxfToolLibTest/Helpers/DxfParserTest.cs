@@ -5,11 +5,11 @@ using DxfToolLib.Schemas;
 using DxfToolLib.Schemas.Core;
 using Xunit;
 
-public class DxfParserTest
+public class DxfServiceTest
 {
-    private readonly IDxfParser parser;
+    private readonly IDxfService parser;
 
-    public DxfParserTest(IDxfParser parser) => this.parser = parser;
+    public DxfServiceTest(IDxfService parser) => this.parser = parser;
 
     [Theory]
     [InlineData("Warstwa 27", @"

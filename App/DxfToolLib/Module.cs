@@ -21,7 +21,7 @@ namespace DxfToolLib
             services.AddSingleton<ISchema, CodePageSchema>();
             services.AddSingleton<ISchema, CadVersionSchema>();
             services.AddSingleton<ISchema, GpsCoordsSchema>();
-            services.AddTransient<IDxfParser, DxfParser>();
+            services.AddTransient<IDxfService, DxfService>();
             services.AddTransient<ISchemaFinder, SchemaFinder>();
             services.AddTransient<IMatchesFinder, MatchesFinder>();
             services.AddTransient<IGpsCoordsFinder, GpsCoordsFinder>();

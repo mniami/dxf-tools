@@ -71,15 +71,15 @@ namespace DxfToolAutoCAD.Mocks
         /// <summary>
         /// Create sample SoundPlan data for testing
         /// </summary>
-        private static List<SoundPlanData> CreateSampleSoundPlanData()
+        private static List<SoundPlanPoint> CreateSampleSoundPlanData()
         {
-            return new List<SoundPlanData>
+            return new List<SoundPlanPoint>
             {
-                new SoundPlanData { Idx = 1, Latitude = "52.5200", Longitude = "13.4050", Height = "34.0", Lrd = "65.2", Lrn = "58.1", Lrdn = "45.3" },
-                new SoundPlanData { Idx = 2, Latitude = "52.5250", Longitude = "13.4100", Height = "36.5", Lrd = "67.8", Lrn = "60.2", Lrdn = "47.1" },
-                new SoundPlanData { Idx = 3, Latitude = "52.5300", Longitude = "13.4150", Height = "38.2", Lrd = "63.4", Lrn = "56.8", Lrdn = "43.9" },
-                new SoundPlanData { Idx = 4, Latitude = "52.5350", Longitude = "13.4200", Height = "35.8", Lrd = "69.1", Lrn = "62.5", Lrdn = "49.2" },
-                new SoundPlanData { Idx = 5, Latitude = "52.5400", Longitude = "13.4250", Height = "37.1", Lrd = "64.7", Lrn = "57.9", Lrdn = "44.6" }
+                new SoundPlanPoint { Idx = 1, Latitude = "52.5200", Longitude = "13.4050", Height = "34.0", Lrd = "65.2", Lrn = "58.1", Lrdn = "45.3" },
+                new SoundPlanPoint { Idx = 2, Latitude = "52.5250", Longitude = "13.4100", Height = "36.5", Lrd = "67.8", Lrn = "60.2", Lrdn = "47.1" },
+                new SoundPlanPoint { Idx = 3, Latitude = "52.5300", Longitude = "13.4150", Height = "38.2", Lrd = "63.4", Lrn = "56.8", Lrdn = "43.9" },
+                new SoundPlanPoint { Idx = 4, Latitude = "52.5350", Longitude = "13.4200", Height = "35.8", Lrd = "69.1", Lrn = "62.5", Lrdn = "49.2" },
+                new SoundPlanPoint { Idx = 5, Latitude = "52.5400", Longitude = "13.4250", Height = "37.1", Lrd = "64.7", Lrn = "57.9", Lrdn = "44.6" }
             };
         }
         

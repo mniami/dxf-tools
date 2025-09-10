@@ -15,7 +15,7 @@ namespace DxfToolAutoCAD.Examples
             var serviceProvider = PluginInitializer.ServiceProvider;
             
             // Here you would get your existing DxfToolLib services
-            // var dxfParser = serviceProvider.GetService<IDxfParser>();
+            // var DxfService = serviceProvider.GetService<IDxfService>();
             // var coordinateConverter = serviceProvider.GetService<ICoordinateConverter>();
             
             // This demonstrates how you can combine AutoCAD data extraction
@@ -38,7 +38,7 @@ namespace DxfToolAutoCAD.Examples
             
             // Example structure:
             // 1. Get AutoCAD entities using services
-            // 2. Map to your DxfPoint, SoundPlanData, etc. models
+            // 2. Map to your DxfPoint, SoundPlanPoint, etc. models
             // 3. Use existing processing logic
             // 4. Return processed results
         }

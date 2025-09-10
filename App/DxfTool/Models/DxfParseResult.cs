@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DxfTool.Models
 {
-    public class DxfParseResult
+    public class DxfServiceResult
     {
         public string Description { get; set; } = "";
         public ICollection<string> PossibleTokens { get; set; } = [];

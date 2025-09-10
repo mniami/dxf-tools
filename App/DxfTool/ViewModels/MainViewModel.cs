@@ -13,7 +13,7 @@ namespace DxfTool.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private readonly IDxfParser parser;
+        private readonly IDxfService parser;
         private readonly IUpdateService updateService;
         private readonly ILoggingService logger;
         private string _dxfFilePath = string.Empty;
@@ -25,7 +25,7 @@ namespace DxfTool.ViewModels
         private bool _updateAvailable = false;
         private string _updateMessage = string.Empty;
         
-        public MainViewModel(IDxfParser parser, IUpdateService updateService, ILoggingService logger)
+        public MainViewModel(IDxfService parser, IUpdateService updateService, ILoggingService logger)
         {
             this.parser = parser;
             this.updateService = updateService;

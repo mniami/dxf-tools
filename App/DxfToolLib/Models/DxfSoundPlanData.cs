@@ -1,5 +1,5 @@
+namespace DxfToolLib.Models;
 using System.ComponentModel.DataAnnotations;
-
 public class DxfSoundPlanData
 {
     [Required]
@@ -10,6 +10,12 @@ public class DxfSoundPlanData
 
     [Required]
     public string Longitude { get; set; }
+
+    [Required]
+    public string OriginalLatitude { get; set; }
+
+    [Required]
+    public string OriginalLongitude { get; set; }
 
     [Required]
     public string Height { get; set; }

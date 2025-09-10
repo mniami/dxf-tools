@@ -94,7 +94,7 @@ namespace DxfToolAutoCAD
 
             // Add your DxfToolLib services here
             // TODO: Register your existing DxfToolLib services
-            // Example: services.AddTransient<IDxfParser, DxfParser>();
+            // Example: services.AddTransient<IDxfService, DxfService>();
             
             // Add AutoCAD-specific services
 #if AUTOCAD_API_AVAILABLE

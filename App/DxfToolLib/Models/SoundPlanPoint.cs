@@ -1,6 +1,7 @@
+namespace DxfToolLib.Models;
 using System.ComponentModel.DataAnnotations;
 
-public class SoundPlanData
+public class SoundPlanPoint
 {
     [Required]
     public int Idx { get; set; }

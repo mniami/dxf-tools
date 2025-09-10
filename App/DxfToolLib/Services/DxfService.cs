@@ -13,22 +13,23 @@ using DxfToolLib.Schemas.Core;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.ComponentModel;
+using DxfToolLib.Models;
 
 namespace DxfToolLib.Helpers;
 
-internal class DxfParser : IDxfParser
+internal class DxfService : IDxfService
 {
     private readonly ISchemaFinder schemaFinder;
     private readonly IGpsCoordsFinder gpsCoordsFinder;
-    private readonly ILogger<DxfParser>? logger;
+    private readonly ILogger<DxfService>? logger;
 
-    public DxfParser(ISchemaFinder schemaFinder, IGpsCoordsFinder gpsCoordsFinder, ILogger<DxfParser>? logger = null)
+    public DxfService(ISchemaFinder schemaFinder, IGpsCoordsFinder gpsCoordsFinder, ILogger<DxfService>? logger = null)
     {
         this.schemaFinder = schemaFinder;
         this.gpsCoordsFinder = gpsCoordsFinder;
         this.logger = logger;
         
-        logger?.LogDebug("DxfParser initialized");
+        logger?.LogDebug("DxfService initialized");
     }
 
     private static DxfDocument? LoadUsingNetDxf(string filePath)
@@ -40,25 +41,35 @@ internal class DxfParser : IDxfParser
         return DxfDocument.Load(filePath);
     }
 
-    private string[] FindPointWithMultiLeaderSchema(string[] inputLines, string[] soundPlanLines)
+    private string[] FindPointWithMultiLeaderSchema(string[] dxfInputLines, string[] soundPlanLines)
     {
         var schemaKey = KnownSchemas.PointWithMultiLeader;
         var schemaName = schemaKey.NAME;
         var dictionary = new Dictionary<string, string> { };
-        var data = schemaFinder.Matches(schemaName, dictionary, inputLines);
+        var data = schemaFinder.Matches(schemaName, dictionary, dxfInputLines);
         var dxfInSoundPlanFormat = data.Select(itemData =>
         {
-            var x = itemData[0].ToSoundPlanGpsCoordinateFormat();
-            var y = itemData[1].ToSoundPlanGpsCoordinateFormat();
+            var x = itemData[0];
+            var y = itemData[1];
+            var z = itemData[2];
+            var layer = itemData[3];
             var description = itemData[4];
 
-            return new DxfPoint { Latitude = x, Longitude = y, Description = description };
+            return new DxfPoint
+            {
+                Latitude = x,
+                Longitude = y,
+                Height = z,
+                Layer = layer,
+                Description = description,
+            };
         });
-        var soundPlanData = soundPlanLines.MapDxfToSoundPlan();
+        var soundPlanPoint = soundPlanLines.MapDxfToSoundPlan();
         
         // Use the dedicated mapper to match DXF points with SoundPlan data
-        return DxfSoundPlanMapper.MatchAndFormat(dxfInSoundPlanFormat, soundPlanData);
+        return DxfSoundPlanMapper.MatchAndFormat(dxfInSoundPlanFormat, soundPlanPoint);
     }
+
 
     private string[] FindHighPointsSchema1(string dxfHighPointName, string[] inputLines)
     {

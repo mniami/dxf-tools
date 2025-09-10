@@ -5,7 +5,7 @@ namespace DxfToolAutoCAD
     /// <summary>
     /// SoundPlan data model for use within the AutoCAD plugin
     /// </summary>
-    public class SoundPlanData
+    public class SoundPlanPoint
     {
         [Required]
         public int Idx { get; set; }

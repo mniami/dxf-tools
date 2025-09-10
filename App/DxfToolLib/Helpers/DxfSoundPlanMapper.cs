@@ -63,6 +63,7 @@ internal static partial class DxfSoundPlanMapper
                     Longitude = dxfPoint.OriginalLongitude,
                     Height = matchingSoundPlanPoint.Height,
                     Description = description,
+                    Layer = dxfPoint.Layer,
                 };
                 matchedData.Add(combinedData);
             }

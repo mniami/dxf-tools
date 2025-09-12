@@ -16,8 +16,9 @@ using System.ComponentModel;
 using DxfToolLib.Models;
 using DxfToolLib.Services;
 using DxfToolLib.Extensions;
+using DxfToolLib.Helpers;
 
-namespace DxfToolLib.Helpers;
+namespace DxfToolLib.Services;
 
 internal class DxfService : IDxfService
 {
@@ -45,13 +46,13 @@ internal class DxfService : IDxfService
         return DxfDocument.Load(filePath);
     }
 
-    private string[] FindPointWithMultiLeaderSchema(string[] dxfInputLines, string[] soundPlanLines)
+    private DxfPoint[] ParseDxfPoints(string[] dxfInputLines)
     {
         var schemaKey = KnownSchemas.PointWithMultiLeader;
         var schemaName = schemaKey.NAME;
         var dictionary = new Dictionary<string, string> { };
         var data = schemaFinder.Matches(schemaName, dictionary, dxfInputLines);
-        var dxfInSoundPlanFormat = data.Select(itemData =>
+        var dxfPoints = data.Select(itemData =>
         {
             var x = itemData[0];
             var y = itemData[1];
@@ -67,13 +68,9 @@ internal class DxfService : IDxfService
                 Layer = layer,
                 Description = description,
             };
-        });
-        var soundPlanPoint = soundPlanLines.MapDxfToSoundPlan();
-        
-        // Use the dedicated mapper to match DXF points with SoundPlan data
-        return DxfSoundPlanMapper.MatchAndFormat(dxfInSoundPlanFormat, soundPlanPoint);
+        }).ToArray();
+        return dxfPoints;
     }
-
 
     private string[] FindHighPointsSchema1(string dxfHighPointName, string[] inputLines)
     {
@@ -223,31 +220,31 @@ internal class DxfService : IDxfService
         });
     }
 
-    public int FindPointsWithMultiLeadersSave(string dxfFilePath, string soundPlanFilePath, string finalTableCsvFilePath, string outputPath)
+    public int UpdateDxfPointsWithSoundPlanDataSave(string dxfFilePath, string soundPlanFilePath, string finalTableCsvFilePath, string outputPath)
     {
         var soundPlanLines = File.ReadLines(soundPlanFilePath).ToArray();
-        
-        // Parse CSV using CsvHelper - much more robust than our custom parser
+        var soundPlanPoints = soundPlanLines.ParseSoundPlanPoints();
         var finalTableData = csvParser.ParseFinalTableDataFromFile(finalTableCsvFilePath).ToArray();
         
         logger?.LogInformation("Parsed {Count} final table data entries from CSV using CsvHelper", finalTableData.Length);
         
         return OperateOnAFile(dxfFilePath, outputPath, (dxfVersion, input) =>
         {
-            return FindPointsWithMultiLeaders(dxfVersion, input, soundPlanLines, finalTableData);
+            var dxfPoints = UpdateDxfPointsWithSoundPlanData(input, soundPlanPoints, finalTableData);
+            return dxfPoints.ToTabSeparatedFormat();
         });
     }
 
-    public string[] FindPointsWithMultiLeaders(int dxfVersion, string[] inputLines, string[] soundPlanLines)
+    public DxfPoint[] UpdateDxfPointsWithSoundPlanData(string[] dxfInputLines, SoundPlanPoint[] soundPlanPoints, FinalTableData[] finalTableData)
     {
-        return FindPointWithMultiLeaderSchema(inputLines, soundPlanLines);
-    }
+        var dxfPoints = ParseDxfPoints(dxfInputLines);
 
-    public string[] FindPointsWithMultiLeaders(int dxfVersion, string[] inputLines, string[] soundPlanLines, FinalTableData[] finalTableData)
-    {
-        // For now, use the existing method - you can extend this to use finalTableData as needed
-        var result = FindPointWithMultiLeaderSchema(inputLines, soundPlanLines);
-        
+        if (soundPlanPoints == null)
+        {
+            return dxfPoints;
+        }
+
+        var dxfPointsWithSoundPlanData = dxfPoints.UpdateWithSoundPlanData(soundPlanPoints);
         // Log the final table data for debugging
         logger?.LogDebug("Final table data contains {Count} entries", finalTableData.Length);
         
@@ -267,6 +264,7 @@ internal class DxfService : IDxfService
             x = e.Coordinates.Split(';').ElementAtOrDefault(0)?.Trim(),
             y = e.Coordinates.Split(';').ElementAtOrDefault(1)?.Trim()
         }).ToArray();
+
         logger?.LogInformation("Found {ValidCount} valid entries with coordinates out of {TotalCount} total entries, filled {FilledCount} entries", 
             validEntries.Length, finalTableData.Length, filledEntries.Length);
         
@@ -277,6 +275,6 @@ internal class DxfService : IDxfService
         // 2. Combine the acoustic calculation data from FinalTableData with spatial data from DXF
         // 3. Format the output according to your requirements
         
-        return result;
+        return dxfPointsWithSoundPlanData;
     }
 }

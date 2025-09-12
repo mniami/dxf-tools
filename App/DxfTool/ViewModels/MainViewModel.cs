@@ -1,7 +1,7 @@
 ﻿using DxfTool.Models;
 using DxfTool.Services;
 using DxfTool.Views;
-using DxfToolLib.Helpers;
+using DxfToolLib.Services;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -268,7 +268,7 @@ namespace DxfTool.ViewModels
                 int result = SelectedDataType switch
                 {
                     DataExtractionType.HighPoints => parser.FindHighPoints(DxfFilePath, DestinationFilePath),
-                    DataExtractionType.GeometryPoints => parser.FindPointsWithMultiLeadersSave(DxfFilePath, SoundPlanFilePath ?? string.Empty, FinalTableCsvFilePath ?? string.Empty, DestinationFilePath),
+                    DataExtractionType.GeometryPoints => parser.UpdateDxfPointsWithSoundPlanDataSave(DxfFilePath, SoundPlanFilePath ?? string.Empty, FinalTableCsvFilePath ?? string.Empty, DestinationFilePath),
                     _ => throw new NotSupportedException($"Typ ekstrakcji danych '{SelectedDataType}' nie jest obsługiwany.")
                 };
                 

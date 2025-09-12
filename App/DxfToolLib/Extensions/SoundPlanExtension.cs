@@ -4,9 +4,9 @@ using DxfToolLib.Models;
 namespace DxfToolLib.Helpers;
 internal static class SoundPlanFileMapperExtensions
 {
-    public static SoundPlanPoint[] MapDxfToSoundPlan(this string[] dxfLines)
+    public static SoundPlanPoint[] ParseSoundPlanPoints(this string[] soundPlanLines)
     {
-        return dxfLines.Skip(3).Select(line => line.Split('\t')).Select(line => new SoundPlanPoint
+        return soundPlanLines.Skip(3).Select(line => line.Split('\t')).Select(line => new SoundPlanPoint
             {
                 Idx = int.Parse(line[0]),
                 Latitude = line[1],

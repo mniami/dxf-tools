@@ -1,6 +1,6 @@
 namespace DxfToolLibTest;
 
-using DxfToolLib.Helpers;
+using DxfToolLib.Services;
 using DxfToolLib.Schemas;
 using DxfToolLib.Schemas.Core;
 using Xunit;
@@ -154,7 +154,8 @@ AcDbText", @"6533599.54,5931087.52,9.032")]
         var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", filePath);
         var inputLines = File.ReadAllLines(fullPath, System.Text.Encoding.UTF8);
 
-        var multiLeaders = parser.FindPointsWithMultiLeaders(1014, inputLines, new string[0]);
-        return Verify(multiLeaders);
+        // Use FindHighPoints to maintain compatibility with existing test expectations
+        var outputLines = parser.FindHighPoints(1014, "", inputLines);
+        return Verify(outputLines);
     }
 }

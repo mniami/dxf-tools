@@ -7,7 +7,7 @@ namespace DxfToolLib.Helpers;
 
 internal static partial class DxfSoundPlanMapper
 {
-    private static string replaceSoundPlanPoints(this string description, string lrd, string lrdn)
+    private static string ReplaceSoundPlanPoints(this string description, string lrd, string lrdn)
     {
         var newDescription = description.Insert(description.IndexOf("x;=") + 3, lrd);
         newDescription = newDescription.Insert(newDescription.IndexOf("x;=", newDescription.IndexOf("x;=") + 3) + 3, lrdn);
@@ -20,12 +20,12 @@ internal static partial class DxfSoundPlanMapper
         return match.Success ? int.Parse(match.Groups[1].Value) : 0;
     }
     /// <summary>
-    /// Matches DXF points with SoundPlan data and produces combined SoundPlanPoint objects.
+    /// Update DXF points with SoundPlan data and produces combined SoundPlanPoint objects.
     /// </summary>
     /// <param name="dxfPoints">Collection of DXF points with coordinates and descriptions</param>
     /// <param name="soundPlanPoint">Array of SoundPlan data with additional properties</param>
     /// <returns>Array of matched DxfSoundPlanData objects</returns>
-    public static DxfPoint[] MatchDxfWithSoundPlan(IEnumerable<DxfPoint> dxfPoints, SoundPlanPoint[] soundPlanPoints)
+    public static DxfPoint[] UpdateWithSoundPlanData(this IEnumerable<DxfPoint> dxfPoints, SoundPlanPoint[] soundPlanPoints)
     {
         var layers = dxfPoints
             .Select(dp => dp.Layer)
@@ -54,7 +54,7 @@ internal static partial class DxfSoundPlanMapper
             var matchingSoundPlanPoint = matchingSoundPlanPoints
                 .Skip(dxfPointLayerIdx)
                 .FirstOrDefault();
-            var description = matchingSoundPlanPoint != null ? dxfPoint.Description.replaceSoundPlanPoints(matchingSoundPlanPoint.Lrd, matchingSoundPlanPoint.Lrdn) : dxfPoint.Description;
+            var description = matchingSoundPlanPoint != null ? dxfPoint.Description.ReplaceSoundPlanPoints(matchingSoundPlanPoint.Lrd, matchingSoundPlanPoint.Lrdn) : dxfPoint.Description;
             var height = matchingSoundPlanPoint != null ? matchingSoundPlanPoint.Height : dxfPoint.Height;
             var combinedData = new DxfPoint
                 {
@@ -71,18 +71,6 @@ internal static partial class DxfSoundPlanMapper
     }
 
     /// <summary>
-    /// Converts DxfSoundPlanData objects to tab-separated string format for output.
-    /// </summary>
-    /// <param name="data">Array of DxfSoundPlanData objects</param>
-    /// <returns>Array of tab-separated strings</returns>
-    public static string[] ToTabSeparatedFormat(DxfPoint[] data)
-    {
-        return data.Select(item => 
-            $"\t{item.Latitude}\t{item.Longitude}\t{item.Height}\t{item.Description}\t{item.Layer}")
-            .ToArray();
-    }
-
-    /// <summary>
     /// Matches DXF points with SoundPlan data and returns the result in tab-separated string format.
     /// </summary>
     /// <param name="dxfPoints">Collection of DXF points with coordinates and descriptions</param>
@@ -90,8 +78,8 @@ internal static partial class DxfSoundPlanMapper
     /// <returns>Array of tab-separated strings</returns>
     public static string[] MatchAndFormat(IEnumerable<DxfPoint> dxfPoints, SoundPlanPoint[] soundPlanPoint)
     {
-        var matchedData = MatchDxfWithSoundPlan(dxfPoints, soundPlanPoint);
-        return ToTabSeparatedFormat(matchedData);
+        var matchedData = UpdateWithSoundPlanData(dxfPoints, soundPlanPoint);
+        return matchedData.ToTabSeparatedFormat();
     }
 
     [GeneratedRegex(@"(\d+)")]

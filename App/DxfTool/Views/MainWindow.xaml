@@ -192,18 +192,44 @@
                 
                 <!-- Update Section -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" 
-                           Margin="0,8,0,0" Visibility="{Binding UpdateMessage, Converter={x:Static local:StringToVisibilityConverter.Instance}}">
-                    <TextBlock Text="🔄" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <TextBlock Text="{Binding UpdateMessage}" FontSize="12" Foreground="#93C5FD" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <Button Content="Zainstaluj Aktualizację" 
-                            Command="{Binding InstallUpdateCommand}"
-                            Visibility="{Binding UpdateAvailable, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"
-                            FontSize="10" 
-                            Padding="8,2"
-                            Background="#10B981"
-                            Foreground="White"
-                            BorderThickness="0"
-                            Cursor="Hand"/>
+                           Margin="0,8,0,0">
+                    <!-- Update info -->
+                    <StackPanel Orientation="Horizontal" 
+                               Visibility="{Binding UpdateMessage, Converter={x:Static local:StringToVisibilityConverter.Instance}}">
+                        <TextBlock Text="🔄" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding UpdateMessage}" FontSize="12" Foreground="#93C5FD" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <Button Content="Zainstaluj Aktualizację" 
+                                Command="{Binding InstallUpdateCommand}"
+                                Visibility="{Binding UpdateAvailable, Converter={x:Static local:BooleanToVisibilityConverter.Instance}}"
+                                FontSize="10" 
+                                Padding="8,2"
+                                Background="#10B981"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Margin="0,0,15,0"/>
+                    </StackPanel>
+                    
+                    <!-- Settings controls -->
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="🗂️ Logi" 
+                                Command="{Binding OpenLogFileCommand}"
+                                FontSize="10" 
+                                Padding="8,2"
+                                Background="#6366F1"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Margin="0,0,8,0"/>
+                        <Button Content="🗑️ Wyczyść Preferencje" 
+                                Command="{Binding ClearPreferencesCommand}"
+                                FontSize="10" 
+                                Padding="8,2"
+                                Background="#EF4444"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Cursor="Hand"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </Border>

@@ -283,6 +283,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="8"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="145"/>
@@ -329,19 +331,40 @@
                                     HorizontalAlignment="Stretch"
                                     Visibility="{Binding SelectedDataType, Converter={x:Static local:GeometryPointsVisibilityConverter.Instance}}"/>
 
-                            <!-- Output File -->
+                            <!-- Final Table CSV File - only visible for GeometryPoints -->
                             <Label Grid.Row="4" Grid.Column="0" 
+                                   Content="📊 Plik CSV Tabeli:" 
+                                   Style="{StaticResource ModernLabel}"
+                                   Visibility="{Binding SelectedDataType, Converter={x:Static local:GeometryPointsVisibilityConverter.Instance}}"/>
+                            
+                            <TextBox Grid.Row="4" Grid.Column="1" 
+                                     Name="txtFinalTableCsvFilePath"
+                                     Text="{Binding FinalTableCsvFilePath, UpdateSourceTrigger=PropertyChanged}" 
+                                     Style="{StaticResource ModernTextBox}"
+                                     IsReadOnly="True"
+                                     Background="#F8FAFC"
+                                     Visibility="{Binding SelectedDataType, Converter={x:Static local:GeometryPointsVisibilityConverter.Instance}}"/>
+                            
+                            <Button Grid.Row="4" Grid.Column="2" 
+                                    Content="Wybierz" 
+                                    Command="{Binding BrowseFinalTableCsvFileCommand}"
+                                    Style="{StaticResource ModernButton}"
+                                    HorizontalAlignment="Stretch"
+                                    Visibility="{Binding SelectedDataType, Converter={x:Static local:GeometryPointsVisibilityConverter.Instance}}"/>
+
+                            <!-- Output File -->
+                            <Label Grid.Row="6" Grid.Column="0" 
                                    Content="💾 Plik Wyjściowy:" 
                                    Style="{StaticResource ModernLabel}"/>
                             
-                            <TextBox Grid.Row="4" Grid.Column="1" 
+                            <TextBox Grid.Row="6" Grid.Column="1" 
                                      Name="txtDestinationFilePath"
                                      Text="{Binding DestinationFilePath, UpdateSourceTrigger=PropertyChanged}" 
                                      Style="{StaticResource ModernTextBox}"
                                      IsReadOnly="True"
                                      Background="#F8FAFC"/>
                             
-                            <Button Grid.Row="4" Grid.Column="2" 
+                            <Button Grid.Row="6" Grid.Column="2" 
                                     Content="Wybierz" 
                                     Command="{Binding BrowseDestinationFileCommand}"
                                     Style="{StaticResource ModernButton}"

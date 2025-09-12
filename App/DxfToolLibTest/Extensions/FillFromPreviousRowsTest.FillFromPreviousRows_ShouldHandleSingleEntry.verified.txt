@@ -1,0 +1,23 @@
+﻿[
+  {
+    Lp: 1,
+    BuildingNr: 9,
+    StageNr: ,
+    CalculatedPointNr: ,
+    AdditionalHeight: ,
+    AppartmentNr: ,
+    RoomType: ,
+    DayOrNight: ,
+    CalculatedNoiseValue: ,
+    MaxNoiseRange: ,
+    AssessmentIndex: ,
+    PartitionDescription: ,
+    RequiredAcousticIsoInsulationType: ,
+    RequiredAcousticInsulationValue: ,
+    RequiredSoundInsulationType: ,
+    RequiredSoundInsulationValue: ,
+    Comments: ,
+    Separator: ,
+    Coordinates: 
+  }
+]

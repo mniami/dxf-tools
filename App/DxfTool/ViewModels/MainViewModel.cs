@@ -18,10 +18,11 @@ namespace DxfTool.ViewModels
         private readonly ILoggingService logger;
         private string _dxfFilePath = string.Empty;
         private string _soundPlanFilePath = string.Empty;
+        private string _finalTableCsvFilePath = string.Empty;
         private string _destinationFilePath = string.Empty;
         private string _statusMessage = string.Empty;
         private string _resultsText = string.Empty;
-        private DataExtractionType _selectedDataType = DataExtractionType.HighPoints;
+        private DataExtractionType _selectedDataType = DataExtractionType.GeometryPoints;
         private bool _updateAvailable = false;
         private string _updateMessage = string.Empty;
         
@@ -52,6 +53,16 @@ namespace DxfTool.ViewModels
             set 
             { 
                 SetProperty(ref _soundPlanFilePath, value);
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+
+        public string FinalTableCsvFilePath
+        {
+            get => _finalTableCsvFilePath;
+            set 
+            { 
+                SetProperty(ref _finalTableCsvFilePath, value);
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -104,6 +115,7 @@ namespace DxfTool.ViewModels
 
         public ICommand BrowseDxfFileCommand { get; private set; } = null!;
         public ICommand BrowseSoundPlanFileCommand { get; private set; } = null!;
+        public ICommand BrowseFinalTableCsvFileCommand { get; private set; } = null!;
         public ICommand BrowseDestinationFileCommand { get; private set; } = null!;
         public ICommand ProcessFileCommand { get; private set; } = null!;
         public ICommand CheckForUpdatesCommand { get; private set; } = null!;
@@ -114,6 +126,7 @@ namespace DxfTool.ViewModels
         {
             BrowseDxfFileCommand = new RelayCommand(BrowseDxfFile);
             BrowseSoundPlanFileCommand = new RelayCommand(BrowseSoundPlanFile);
+            BrowseFinalTableCsvFileCommand = new RelayCommand(BrowseFinalTableCsvFile);
             BrowseDestinationFileCommand = new RelayCommand(BrowseDestinationFile);
             ProcessFileCommand = new RelayCommand(ProcessFile, CanProcessFile);
             CheckForUpdatesCommand = new RelayCommand(async () => await CheckForUpdatesAsync());
@@ -163,6 +176,27 @@ namespace DxfTool.ViewModels
             }
         }
 
+        private void BrowseFinalTableCsvFile()
+        {
+            logger.LogDebug("Opening Final Table CSV file browser dialog");
+            
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Pliki CSV (*.csv)|*.csv|Pliki tekstowe (*.txt)|*.txt|Wszystkie pliki (*.*)|*.*",
+                Title = "Wybierz plik CSV z tabelą końcową"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                FinalTableCsvFilePath = openFileDialog.FileName;
+                logger.LogInformation("Final Table CSV file selected: {FilePath}", FinalTableCsvFilePath);
+            }
+            else
+            {
+                logger.LogDebug("Final Table CSV file selection cancelled");
+            }
+        }
+
         private void BrowseDestinationFile()
         {
             logger.LogDebug("Opening destination file browser dialog");
@@ -190,12 +224,14 @@ namespace DxfTool.ViewModels
                                  !string.IsNullOrWhiteSpace(DestinationFilePath) &&
                                  File.Exists(DxfFilePath);
 
-            // If GeometryPoints is selected, also require SoundPlan file
+            // If GeometryPoints is selected, also require SoundPlan file and Final Table CSV file
             if (SelectedDataType == DataExtractionType.GeometryPoints)
             {
                 return basicValidation && 
                        !string.IsNullOrWhiteSpace(SoundPlanFilePath) && 
-                       File.Exists(SoundPlanFilePath);
+                       File.Exists(SoundPlanFilePath) &&
+                       !string.IsNullOrWhiteSpace(FinalTableCsvFilePath) && 
+                       File.Exists(FinalTableCsvFilePath);
             }
 
             return basicValidation;
@@ -205,16 +241,14 @@ namespace DxfTool.ViewModels
         {
             try
             {
-                logger.LogInformation("Starting file processing - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}, SoundPlan: {SoundPlanFile}", 
-                    SelectedDataType, DxfFilePath, DestinationFilePath, SoundPlanFilePath ?? "N/A");
-                
-                StatusMessage = "Przetwarzanie...";
+            logger.LogInformation("Starting file processing - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}, SoundPlan: {SoundPlanFile}, FinalTableCsv: {FinalTableCsvFile}", 
+                SelectedDataType, DxfFilePath, DestinationFilePath, SoundPlanFilePath ?? "N/A", FinalTableCsvFilePath ?? "N/A");                StatusMessage = "Przetwarzanie...";
                 ResultsText = string.Empty;
 
                 int result = SelectedDataType switch
                 {
                     DataExtractionType.HighPoints => parser.FindHighPoints(DxfFilePath, DestinationFilePath),
-                    DataExtractionType.GeometryPoints => parser.FindPointsWithMultiLeadersSave(DxfFilePath, SoundPlanFilePath ?? string.Empty, DestinationFilePath),
+                    DataExtractionType.GeometryPoints => parser.FindPointsWithMultiLeadersSave(DxfFilePath, SoundPlanFilePath ?? string.Empty, FinalTableCsvFilePath ?? string.Empty, DestinationFilePath),
                     _ => throw new NotSupportedException($"Typ ekstrakcji danych '{SelectedDataType}' nie jest obsługiwany.")
                 };
                 
@@ -225,9 +259,16 @@ namespace DxfTool.ViewModels
                                $"Liczba znalezionych elementów: {result}\n" +
                                $"Plik źródłowy DXF: {DxfFilePath}\n";
                 
-                if (SelectedDataType == DataExtractionType.GeometryPoints && !string.IsNullOrWhiteSpace(SoundPlanFilePath))
+                if (SelectedDataType == DataExtractionType.GeometryPoints)
                 {
-                    resultText += $"Plik SoundPlan: {SoundPlanFilePath}\n";
+                    if (!string.IsNullOrWhiteSpace(SoundPlanFilePath))
+                    {
+                        resultText += $"Plik SoundPlan: {SoundPlanFilePath}\n";
+                    }
+                    if (!string.IsNullOrWhiteSpace(FinalTableCsvFilePath))
+                    {
+                        resultText += $"Plik CSV z tabelą końcową: {FinalTableCsvFilePath}\n";
+                    }
                 }
                 
                 resultText += $"Plik wyjściowy: {DestinationFilePath}";
@@ -240,8 +281,8 @@ namespace DxfTool.ViewModels
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "File processing failed - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}, SoundPlan: {SoundPlanFile}", 
-                    SelectedDataType, DxfFilePath, DestinationFilePath, SoundPlanFilePath ?? "N/A");
+                logger.LogError(ex, "File processing failed - DataType: {DataType}, Source: {SourceFile}, Destination: {DestinationFile}, SoundPlan: {SoundPlanFile}, FinalTableCsv: {FinalTableCsvFile}", 
+                    SelectedDataType, DxfFilePath, DestinationFilePath, SoundPlanFilePath ?? "N/A", FinalTableCsvFilePath ?? "N/A");
                 
                 StatusMessage = "Wystąpił błąd podczas przetwarzania";
                 ResultsText = $"Błąd: {ex.Message}";
@@ -262,6 +303,7 @@ namespace DxfTool.ViewModels
                                             $"Czas: {DateTime.Now:yyyy-MM-dd HH:mm:ss}\n" +
                                             $"Plik DXF: {DxfFilePath}\n" +
                                             $"Plik SoundPlan: {SoundPlanFilePath ?? "N/A"}\n" +
+                                            $"Plik CSV z tabelą końcową: {FinalTableCsvFilePath ?? "N/A"}\n" +
                                             $"Plik wyjściowy: {DestinationFilePath}\n" +
                                             $"Typ danych: {SelectedDataType}\n\n" +
                                             $"Plik logów: {logger.GetLogFilePath()}";

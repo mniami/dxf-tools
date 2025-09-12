@@ -1,6 +1,7 @@
 ﻿using DxfToolLib.Helpers;
 using DxfToolLib.Schemas;
 using DxfToolLib.Schemas.Core;
+using DxfToolLib.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace DxfToolLib
             services.AddTransient<ISchemaFinder, SchemaFinder>();
             services.AddTransient<IMatchesFinder, MatchesFinder>();
             services.AddTransient<IGpsCoordsFinder, GpsCoordsFinder>();
+            services.AddTransient<ICsvParser, CsvParser>();
         }
     }
 }

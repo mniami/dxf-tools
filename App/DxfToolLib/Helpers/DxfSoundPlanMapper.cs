@@ -54,19 +54,17 @@ internal static partial class DxfSoundPlanMapper
             var matchingSoundPlanPoint = matchingSoundPlanPoints
                 .Skip(dxfPointLayerIdx)
                 .FirstOrDefault();
-            if (matchingSoundPlanPoint != null)
-            {
-                var description = dxfPoint.Description.replaceSoundPlanPoints(matchingSoundPlanPoint.Lrd, matchingSoundPlanPoint.Lrdn);
-                var combinedData = new DxfPoint
+            var description = matchingSoundPlanPoint != null ? dxfPoint.Description.replaceSoundPlanPoints(matchingSoundPlanPoint.Lrd, matchingSoundPlanPoint.Lrdn) : dxfPoint.Description;
+            var height = matchingSoundPlanPoint != null ? matchingSoundPlanPoint.Height : dxfPoint.Height;
+            var combinedData = new DxfPoint
                 {
                     Latitude = dxfPoint.OriginalLatitude,
                     Longitude = dxfPoint.OriginalLongitude,
-                    Height = matchingSoundPlanPoint.Height,
+                    Height = height,
                     Description = description,
                     Layer = dxfPoint.Layer,
                 };
                 matchedData.Add(combinedData);
-            }
         }
 
         return matchedData.ToArray();

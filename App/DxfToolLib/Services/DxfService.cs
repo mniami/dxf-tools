@@ -14,6 +14,8 @@ using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.ComponentModel;
 using DxfToolLib.Models;
+using DxfToolLib.Services;
+using DxfToolLib.Extensions;
 
 namespace DxfToolLib.Helpers;
 
@@ -21,12 +23,14 @@ internal class DxfService : IDxfService
 {
     private readonly ISchemaFinder schemaFinder;
     private readonly IGpsCoordsFinder gpsCoordsFinder;
+    private readonly ICsvParser csvParser;
     private readonly ILogger<DxfService>? logger;
 
-    public DxfService(ISchemaFinder schemaFinder, IGpsCoordsFinder gpsCoordsFinder, ILogger<DxfService>? logger = null)
+    public DxfService(ISchemaFinder schemaFinder, IGpsCoordsFinder gpsCoordsFinder, ICsvParser csvParser, ILogger<DxfService>? logger = null)
     {
         this.schemaFinder = schemaFinder;
         this.gpsCoordsFinder = gpsCoordsFinder;
+        this.csvParser = csvParser;
         this.logger = logger;
         
         logger?.LogDebug("DxfService initialized");
@@ -219,17 +223,60 @@ internal class DxfService : IDxfService
         });
     }
 
-    public int FindPointsWithMultiLeadersSave(string dxfFilePath, string soundPlanFilePath, string outputPath)
+    public int FindPointsWithMultiLeadersSave(string dxfFilePath, string soundPlanFilePath, string finalTableCsvFilePath, string outputPath)
     {
         var soundPlanLines = File.ReadLines(soundPlanFilePath).ToArray();
+        
+        // Parse CSV using CsvHelper - much more robust than our custom parser
+        var finalTableData = csvParser.ParseFinalTableDataFromFile(finalTableCsvFilePath).ToArray();
+        
+        logger?.LogInformation("Parsed {Count} final table data entries from CSV using CsvHelper", finalTableData.Length);
+        
         return OperateOnAFile(dxfFilePath, outputPath, (dxfVersion, input) =>
         {
-            return FindPointsWithMultiLeaders(dxfVersion, input, soundPlanLines);
+            return FindPointsWithMultiLeaders(dxfVersion, input, soundPlanLines, finalTableData);
         });
     }
 
     public string[] FindPointsWithMultiLeaders(int dxfVersion, string[] inputLines, string[] soundPlanLines)
     {
         return FindPointWithMultiLeaderSchema(inputLines, soundPlanLines);
+    }
+
+    public string[] FindPointsWithMultiLeaders(int dxfVersion, string[] inputLines, string[] soundPlanLines, FinalTableData[] finalTableData)
+    {
+        // For now, use the existing method - you can extend this to use finalTableData as needed
+        var result = FindPointWithMultiLeaderSchema(inputLines, soundPlanLines);
+        
+        // Log the final table data for debugging
+        logger?.LogDebug("Final table data contains {Count} entries", finalTableData.Length);
+        
+        // Example of how to work with the parsed CSV data:
+        var validEntries = finalTableData
+            .WithValidLp()                    // Filter entries with valid sequential numbers
+            .WithCalculatedPointNumbers()     // Filter entries with valid calculation point numbers
+            .WithCoordinates()               // Filter entries with valid coordinates
+            .ToArray();
+
+        // Fill missing cells by copying data from previous complete rows
+        var filledEntries = validEntries.FillFromPreviousRows();
+        var selectedCsvEntries = filledEntries.Select(e => new
+        {
+            e.AdditionalHeight,
+            e.CalculatedPointNr,
+            x = e.Coordinates.Split(';').ElementAtOrDefault(0)?.Trim(),
+            y = e.Coordinates.Split(';').ElementAtOrDefault(1)?.Trim()
+        }).ToArray();
+        logger?.LogInformation("Found {ValidCount} valid entries with coordinates out of {TotalCount} total entries, filled {FilledCount} entries", 
+            validEntries.Length, finalTableData.Length, filledEntries.Length);
+        
+        // TODO: Implement logic to combine DXF points, SoundPlan data, and FinalTableData
+        // This is where you would implement the business logic to match and merge the data
+        // For example:
+        // 1. Match DXF points with FinalTableData entries by coordinates or point numbers
+        // 2. Combine the acoustic calculation data from FinalTableData with spatial data from DXF
+        // 3. Format the output according to your requirements
+        
+        return result;
     }
 }

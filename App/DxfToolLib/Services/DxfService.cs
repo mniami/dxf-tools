@@ -255,18 +255,22 @@ internal class DxfService : IDxfService
             .WithCoordinates()               // Filter entries with valid coordinates
             .ToArray();
 
-        // Fill missing cells by copying data from previous complete rows
-        var filledEntries = validEntries.FillFromPreviousRows();
-        var selectedCsvEntries = filledEntries.Select(e => new
-        {
-            e.AdditionalHeight,
-            e.CalculatedPointNr,
-            x = e.Coordinates.Split(';').ElementAtOrDefault(0)?.Trim(),
-            y = e.Coordinates.Split(';').ElementAtOrDefault(1)?.Trim()
-        }).ToArray();
+        var reportItems = validEntries
+            .FillFromPreviousRows()
+            .Select(e => new ReportItemData
+            {
+                AdditionalHeight = e.AdditionalHeight,
+                CalculatedPointNr = e.CalculatedPointNr,
+                X = e.Coordinates.Split(';').ElementAtOrDefault(0)?.Trim() ?? string.Empty,
+                Y = e.Coordinates.Split(';').ElementAtOrDefault(1)?.Trim() ?? string.Empty
+            }).ToArray();
 
+        
         logger?.LogInformation("Found {ValidCount} valid entries with coordinates out of {TotalCount} total entries, filled {FilledCount} entries", 
-            validEntries.Length, finalTableData.Length, filledEntries.Length);
+            validEntries.Length, finalTableData.Length, reportItems.Length);
+        
+        // Map reportItems coordinates with dxfPointsWithSoundPlanData using extension method
+        var dxfPointsWithReportMatches = dxfPointsWithSoundPlanData.MapWithReportItems(reportItems, logger);
         
         // TODO: Implement logic to combine DXF points, SoundPlan data, and FinalTableData
         // This is where you would implement the business logic to match and merge the data
@@ -275,6 +279,6 @@ internal class DxfService : IDxfService
         // 2. Combine the acoustic calculation data from FinalTableData with spatial data from DXF
         // 3. Format the output according to your requirements
         
-        return dxfPointsWithSoundPlanData;
+        return dxfPointsWithReportMatches;
     }
 }

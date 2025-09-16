@@ -15,4 +15,6 @@ public class DxfPointReportItem
     public string AdditionalHeight { get; set; } = String.Empty;
     [Required]
     public string Description { get; set; } = String.Empty;
+    [Required]
+    public int LayerIdx { get; set; } = 0;
 }

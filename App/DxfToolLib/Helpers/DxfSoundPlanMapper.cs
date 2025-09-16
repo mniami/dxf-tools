@@ -25,7 +25,7 @@ internal static partial class DxfSoundPlanMapper
     /// <param name="dxfPoints">Collection of DXF points with coordinates and descriptions</param>
     /// <param name="soundPlanPoint">Array of SoundPlan data with additional properties</param>
     /// <returns>Array of matched DxfSoundPlanData objects</returns>
-    public static DxfPoint[] UpdateWithSoundPlanData(this IEnumerable<DxfPoint> dxfPoints, SoundPlanPoint[] soundPlanPoints)
+    public static DxfSoundPlanData[] UpdateWithSoundPlanData(this IEnumerable<DxfPoint> dxfPoints, SoundPlanPoint[] soundPlanPoints)
     {
         var layers = dxfPoints
             .Select(dp => dp.Layer)
@@ -33,7 +33,7 @@ internal static partial class DxfSoundPlanMapper
             .Select(layer => new { layer, idx = ParseLayerZIndex(layer) })
             .OrderBy(x => x.idx)
             .ToList();
-        var matchedData = new List<DxfPoint>();
+        var matchedData = new List<DxfSoundPlanData>();
         var dxfInSoundPlanFormatPoints = dxfPoints.Select(dp => new
         {
             Latitude = dp.Latitude.ToSoundPlanGpsCoordinateFormat(),
@@ -56,13 +56,14 @@ internal static partial class DxfSoundPlanMapper
                 .FirstOrDefault();
             var description = matchingSoundPlanPoint != null ? dxfPoint.Description.ReplaceSoundPlanPoints(matchingSoundPlanPoint.Lrd, matchingSoundPlanPoint.Lrdn) : dxfPoint.Description;
             var height = matchingSoundPlanPoint != null ? matchingSoundPlanPoint.Height : dxfPoint.Height;
-            var combinedData = new DxfPoint
+            var combinedData = new DxfSoundPlanData
             {
                 Latitude = dxfPoint.OriginalLatitude,
                 Longitude = dxfPoint.OriginalLongitude,
                 Height = height,
                 Description = description,
                 Layer = dxfPoint.Layer,
+                LayerIdx = dxfPointLayerIdx,
             };
             matchedData.Add(combinedData);
         }

@@ -4,28 +4,16 @@ public class DxfSoundPlanData
 {
     [Required]
     public int Idx { get; set; }
-
     [Required]
-    public string Latitude { get; set; }
-
+    public string Latitude { get; set; } = String.Empty;
     [Required]
-    public string Longitude { get; set; }
-
+    public string Longitude { get; set; } = String.Empty;
     [Required]
-    public string OriginalLatitude { get; set; }
-
+    public string Height { get; set; } = String.Empty;
     [Required]
-    public string OriginalLongitude { get; set; }
-
+    public string Layer { get; set; } = String.Empty;
     [Required]
-    public string Height { get; set; }
-
+    public string Description { get; set; } = String.Empty;
     [Required]
-    public string Lrd { get; set; }
-    [Required]
-    public string Lrn { get; set; }
-    [Required]
-    public string Lrdn { get; set; }
-    [Required]
-    public string Description { get; set; }
+    public int LayerIdx { get; set; } = 0;
 }

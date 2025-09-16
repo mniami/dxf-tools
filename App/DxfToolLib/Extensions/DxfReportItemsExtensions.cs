@@ -18,7 +18,7 @@ public static class DxfReportItemsExtensions
     /// <param name="reportItems">The report items to match with</param>
     /// <param name="logger">Optional logger for tracking matches</param>
     /// <returns>Array of DXF points enhanced with report data where matches are found</returns>
-    public static DxfPointReportItem[] MapWithReportItems(this DxfPoint[] dxfPoints, ReportItemData[] reportItems, ILogger? logger = null)
+    public static DxfPointReportItem[] MapWithReportItems(this DxfSoundPlanData[] dxfPoints, ReportItemData[] reportItems, ILogger? logger = null)
     {
         return dxfPoints.Select(dxfPoint =>
         {
@@ -31,9 +31,13 @@ public static class DxfReportItemsExtensions
                 x = ri.X == null ? 0 : TryParseCoordinate(ri.X),
                 y = ri.Y == null ? 0 : TryParseCoordinate(ri.Y)
             }).ToArray();
-            var matchingReportItem = reportItemCoordinates.FirstOrDefault(reportItem =>
-                reportItem.x == dxfPointX &&
-                reportItem.y == dxfPointY)?.ri;
+            
+            var matchingReportItem = reportItemCoordinates
+                .Where(reportItem =>
+                    reportItem.x == dxfPointX &&
+                    reportItem.y == dxfPointY)
+                .OrderBy(p => p.ri.AdditionalHeight)
+                .ElementAtOrDefault(dxfPoint.LayerIdx)?.ri;
 
             var oldLabel = dxfPoint.Description.Split(';')[2].Split('}')[0];
             var newLabel = matchingReportItem?.CalculatedPointNr ?? oldLabel;
@@ -46,6 +50,7 @@ public static class DxfReportItemsExtensions
                 Height = dxfPoint.Height,
                 Layer = dxfPoint.Layer,
                 Description = description,
+                LayerIdx = dxfPoint.LayerIdx,
                 AdditionalHeight = matchingReportItem?.AdditionalHeight ?? String.Empty,
             };
         }).ToArray();

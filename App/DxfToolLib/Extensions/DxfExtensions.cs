@@ -88,9 +88,12 @@ public static class DxfExtensions
                 {
                     var matchPoint = updatedDxfPoints.FirstOrDefault(dp =>
                         dp.Latitude == pointData.Latitude &&
-                        dp.Longitude == pointData.Longitude && 
+                        dp.Longitude == pointData.Longitude &&
                         dp.Layer == pointData.Layer);
+                    var heightLineIdx = lineIdx - expectedIdx + metadata[KnownSchemas.PointWithMultiLeader.FIELDS.HEIGHT];
+
                     dxfInputLines[lineIdx] = matchPoint?.Description ?? line;
+                    dxfInputLines[heightLineIdx] = matchPoint?.Height.Replace(",", ".") ?? dxfInputLines[heightLineIdx];
                 }
             }
             else if (expectedIdx > 0)

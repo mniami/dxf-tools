@@ -3,6 +3,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.IO;
 
 namespace DxfTool.Views
 {
@@ -128,6 +129,32 @@ namespace DxfTool.Views
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value is Visibility visibility && visibility == Visibility.Visible;
+        }
+    }
+
+    // New: Converts a full path string to just the file name for display
+    public class FileNameConverter : IValueConverter
+    {
+        public static readonly FileNameConverter Instance = new();
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var s = value?.ToString();
+            if (string.IsNullOrWhiteSpace(s)) return string.Empty;
+            try
+            {
+                return Path.GetFileName(s);
+            }
+            catch
+            {
+                return s; // fallback if Path throws on weird input
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // We don't reconstruct paths from file names in UI
+            return value;
         }
     }
 }

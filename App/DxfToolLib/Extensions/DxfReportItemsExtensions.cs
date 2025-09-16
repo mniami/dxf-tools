@@ -7,6 +7,10 @@ namespace DxfToolLib.Extensions;
 
 public static class DxfReportItemsExtensions
 {
+    private static int TryParseCoordinate(string coordinate)
+    {
+        return int.TryParse(System.Text.RegularExpressions.Regex.Replace(coordinate.Trim(), "\\s+", ""), out var result) ? result : 0;
+    }
     /// <summary>
     /// Maps DXF points with report items based on coordinate matching (X,Y with Latitude,Longitude)
     /// </summary>
@@ -19,15 +23,23 @@ public static class DxfReportItemsExtensions
         var dxfPointsWithReportMatches = dxfPoints.Select(dxfPoint =>
         {
             // Find matching report item by coordinates
-            var matchingReportItem = reportItems.FirstOrDefault(reportItem =>
-                string.Equals(reportItem.X?.Trim(), dxfPoint.Latitude?.Trim(), StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(reportItem.Y?.Trim(), dxfPoint.Longitude?.Trim(), StringComparison.OrdinalIgnoreCase));
+            var dxfPointX = (int)Math.Round(Double.Parse(dxfPoint.Latitude.Replace(".", ",")), MidpointRounding.AwayFromZero);
+            var dxfPointY = (int)Math.Round(Double.Parse(dxfPoint.Longitude.Replace(".", ",")), MidpointRounding.AwayFromZero);
+            var reportItemCoordinates = reportItems.Select(ri => new
+            {
+                ri,
+                x = ri.X == null ? 0 : TryParseCoordinate(ri.X),
+                y = ri.Y == null ? 0 : TryParseCoordinate(ri.Y)
+            }).ToArray();
+            var matchingReportItem = reportItemCoordinates.FirstOrDefault(reportItem =>
+                reportItem.x == dxfPointX &&
+                reportItem.y == dxfPointY)?.ri;
 
             // Create a copy of the DxfPoint with additional report data if match found
             var result = new DxfPoint
             {
-                Latitude = dxfPoint.Latitude,
-                Longitude = dxfPoint.Longitude,
+                Latitude = dxfPoint.Latitude.Replace(".", ","),
+                Longitude = dxfPoint.Longitude.Replace(".", ","),
                 Height = dxfPoint.Height,
                 Layer = dxfPoint.Layer,
                 Description = dxfPoint.Description
@@ -42,13 +54,16 @@ public static class DxfReportItemsExtensions
                 result.Height = (currentHeight + additionalHeight).ToString();
             }
 
+            var oldLabel = result.Description.Split(';')[2].Split('}')[0];
+            var newLabel = matchingReportItem?.CalculatedPointNr ?? oldLabel;
+            if (oldLabel != newLabel)
+            {
+                result.Description = result.Description.Replace(oldLabel, newLabel);
+                logger?.LogInformation("Updated label from '{OldLabel}' to '{NewLabel}' for point at ({Latitude}, {Longitude})", oldLabel, newLabel, result.Latitude, result.Longitude);
+            }
             return result;
         }).ToArray();
-        
-        logger?.LogInformation("Mapped {MatchCount} DXF points with report data out of {TotalDxfPoints} total DXF points", 
-            dxfPointsWithReportMatches.Count(p => p.Description?.Contains("[CalcPt:") == true), 
-            dxfPoints.Length);
-        
+
         return dxfPointsWithReportMatches;
     }
 }

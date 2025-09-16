@@ -7,9 +7,9 @@
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>dxf_10260363.ico</ApplicationIcon>
-    <AssemblyVersion>1.0.18.0</AssemblyVersion>
-    <FileVersion>1.0.18.0</FileVersion>
-    <Version>1.0.18</Version>
+    <AssemblyVersion>1.0.19.0</AssemblyVersion>
+    <FileVersion>1.0.19.0</FileVersion>
+    <Version>1.0.19</Version>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <PublishUrl>bin\publish\</PublishUrl>
     <Install>true</Install>
@@ -22,7 +22,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.18.0</ApplicationVersion>
+    <ApplicationVersion>1.0.19.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>

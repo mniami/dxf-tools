@@ -10,6 +10,6 @@ namespace DxfToolLib.Services
         string[] FindHighPoints(int dxfVersion, string[] inputLines);
         int FindAllGpsCoords(string filePath, string outputPath);
         int UpdateDxfPointsWithSoundPlanDataSave(string dxfFilePath, string soundPlanFilePath, string finalTableCsvFilePath, string outputPath);
-        DxfPoint[] UpdateDxfPointsWithSoundPlanData(string[] dxfInputLines, SoundPlanPoint[] soundPlanPoints, FinalTableData[] finalTableData);
+        DxfPointReportItem[] UpdateDxfPointsWithSoundPlanData(string[] dxfInputLines, SoundPlanPoint[] soundPlanPoints, FinalTableData[] finalTableData);
     }
 }

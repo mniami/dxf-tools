@@ -17,6 +17,15 @@
     public class PointWithMultiLeaderMetadata
     {
         public readonly string NAME = "POINT_WITH_MULTILEADER";
+        public class FieldsMetadata
+        {
+            public readonly string LATTITUDE = "Lattitude"; // (typo retained if intentional)
+            public readonly string LONGITUDE = "Longitude";
+            public readonly string HEIGHT = "Height";
+            public readonly string LAYER_NAME = "LayerName";
+            public readonly string DESCRIPTION = "Description";
+        }
+        public readonly FieldsMetadata FIELDS = new();
     }
     public class CodePageMetadata
     {

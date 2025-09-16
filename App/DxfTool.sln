@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DxfToolLib", "DxfToolLib\Dx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DxfToolLibTest", "DxfToolLibTest\DxfToolLibTest.csproj", "{305F1E56-0A87-4807-A4F6-94AF1ED5CFE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DxfToolAutoCAD", "DxfToolAutoCAD\DxfToolAutoCAD.csproj", "{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

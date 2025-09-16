@@ -18,9 +18,9 @@ public static class DxfReportItemsExtensions
     /// <param name="reportItems">The report items to match with</param>
     /// <param name="logger">Optional logger for tracking matches</param>
     /// <returns>Array of DXF points enhanced with report data where matches are found</returns>
-    public static DxfPoint[] MapWithReportItems(this DxfPoint[] dxfPoints, ReportItemData[] reportItems, ILogger? logger = null)
+    public static DxfPointReportItem[] MapWithReportItems(this DxfPoint[] dxfPoints, ReportItemData[] reportItems, ILogger? logger = null)
     {
-        var dxfPointsWithReportMatches = dxfPoints.Select(dxfPoint =>
+        return dxfPoints.Select(dxfPoint =>
         {
             // Find matching report item by coordinates
             var dxfPointX = (int)Math.Round(Double.Parse(dxfPoint.Latitude.Replace(".", ",")), MidpointRounding.AwayFromZero);
@@ -35,35 +35,19 @@ public static class DxfReportItemsExtensions
                 reportItem.x == dxfPointX &&
                 reportItem.y == dxfPointY)?.ri;
 
+            var oldLabel = dxfPoint.Description.Split(';')[2].Split('}')[0];
+            var newLabel = matchingReportItem?.CalculatedPointNr ?? oldLabel;
+            var description = dxfPoint.Description.Replace(oldLabel, newLabel);
             // Create a copy of the DxfPoint with additional report data if match found
-            var result = new DxfPoint
+            return new DxfPointReportItem
             {
                 Latitude = dxfPoint.Latitude.Replace(".", ","),
                 Longitude = dxfPoint.Longitude.Replace(".", ","),
                 Height = dxfPoint.Height,
                 Layer = dxfPoint.Layer,
-                Description = dxfPoint.Description
+                Description = description,
+                AdditionalHeight = matchingReportItem?.AdditionalHeight ?? String.Empty,
             };
-
-            // If we found a matching report item, enhance description with report data
-            if (matchingReportItem != null)
-            {
-                // Parse heights and calculate sum
-                var currentHeight = double.TryParse(result.Height, out var currentHeightValue) ? currentHeightValue : 0;
-                var additionalHeight = double.TryParse(matchingReportItem.AdditionalHeight, out var additionalHeightValue) ? additionalHeightValue : 0;
-                result.Height = (currentHeight + additionalHeight).ToString();
-            }
-
-            var oldLabel = result.Description.Split(';')[2].Split('}')[0];
-            var newLabel = matchingReportItem?.CalculatedPointNr ?? oldLabel;
-            if (oldLabel != newLabel)
-            {
-                result.Description = result.Description.Replace(oldLabel, newLabel);
-                logger?.LogInformation("Updated label from '{OldLabel}' to '{NewLabel}' for point at ({Latitude}, {Longitude})", oldLabel, newLabel, result.Latitude, result.Longitude);
-            }
-            return result;
         }).ToArray();
-
-        return dxfPointsWithReportMatches;
     }
 }

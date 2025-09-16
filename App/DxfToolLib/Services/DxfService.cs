@@ -26,6 +26,7 @@ internal class DxfService : IDxfService
     private readonly IGpsCoordsFinder gpsCoordsFinder;
     private readonly ICsvParser csvParser;
     private readonly ILogger<DxfService>? logger;
+    private readonly PointWithMultiLeaderSchema pointWithMultiLeaderSchema;
 
     public DxfService(ISchemaFinder schemaFinder, IGpsCoordsFinder gpsCoordsFinder, ICsvParser csvParser, ILogger<DxfService>? logger = null)
     {
@@ -33,6 +34,7 @@ internal class DxfService : IDxfService
         this.gpsCoordsFinder = gpsCoordsFinder;
         this.csvParser = csvParser;
         this.logger = logger;
+        this.pointWithMultiLeaderSchema = new PointWithMultiLeaderSchema();
         
         logger?.LogDebug("DxfService initialized");
     }
@@ -225,23 +227,37 @@ internal class DxfService : IDxfService
         var soundPlanLines = File.ReadLines(soundPlanFilePath).ToArray();
         var soundPlanPoints = soundPlanLines.ParseSoundPlanPoints();
         var finalTableData = csvParser.ParseFinalTableDataFromFile(finalTableCsvFilePath).ToArray();
-        
+        var updatedDxfFilePath = dxfFilePath.EndsWith(".dxf", StringComparison.OrdinalIgnoreCase) ?
+            dxfFilePath.Substring(0, dxfFilePath.Length - 4) + "_updated.dxf" :
+            dxfFilePath + "_updated.dxf";
         logger?.LogInformation("Parsed {Count} final table data entries from CSV using CsvHelper", finalTableData.Length);
         
         return OperateOnAFile(dxfFilePath, outputPath, (dxfVersion, input) =>
         {
             var dxfPoints = UpdateDxfPointsWithSoundPlanData(input, soundPlanPoints, finalTableData);
+            var newDxfFileLines = input.UpdateDxfWithSoundPlanData(dxfPoints, this.pointWithMultiLeaderSchema);
+
+            File.WriteAllLines(updatedDxfFilePath, newDxfFileLines);
+
             return dxfPoints.ToTabSeparatedFormat();
         });
     }
 
-    public DxfPoint[] UpdateDxfPointsWithSoundPlanData(string[] dxfInputLines, SoundPlanPoint[] soundPlanPoints, FinalTableData[] finalTableData)
+    public DxfPointReportItem[] UpdateDxfPointsWithSoundPlanData(string[] dxfInputLines, SoundPlanPoint[] soundPlanPoints, FinalTableData[] finalTableData)
     {
         var dxfPoints = ParseDxfPoints(dxfInputLines);
 
         if (soundPlanPoints == null)
         {
-            return dxfPoints;
+            return dxfPoints.Select(dp => new DxfPointReportItem
+            {
+                Latitude = dp.Latitude.Replace(".", ","),
+                Longitude = dp.Longitude.Replace(".", ","),
+                Height = dp.Height,
+                Layer = dp.Layer,
+                Description = dp.Description,
+                AdditionalHeight = String.Empty,
+            }).ToArray();
         }
 
         var dxfPointsWithSoundPlanData = dxfPoints.UpdateWithSoundPlanData(soundPlanPoints);
@@ -269,16 +285,8 @@ internal class DxfService : IDxfService
         logger?.LogInformation("Found {ValidCount} valid entries with coordinates out of {TotalCount} total entries, filled {FilledCount} entries", 
             validEntries.Length, finalTableData.Length, reportItems.Length);
         
-        // Map reportItems coordinates with dxfPointsWithSoundPlanData using extension method
         var dxfPointsWithReportMatches = dxfPointsWithSoundPlanData.MapWithReportItems(reportItems, logger);
-        
-        // TODO: Implement logic to combine DXF points, SoundPlan data, and FinalTableData
-        // This is where you would implement the business logic to match and merge the data
-        // For example:
-        // 1. Match DXF points with FinalTableData entries by coordinates or point numbers
-        // 2. Combine the acoustic calculation data from FinalTableData with spatial data from DXF
-        // 3. Format the output according to your requirements
-        
+
         return dxfPointsWithReportMatches;
     }
 }

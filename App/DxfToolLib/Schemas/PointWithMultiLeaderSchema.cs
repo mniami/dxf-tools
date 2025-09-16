@@ -5,6 +5,17 @@ namespace DxfToolLib.Schemas
 {
     public class PointWithMultiLeaderSchema : ISchema
     {
+        // 1-based indexes of meaningful capture groups within the schema definition
+        // NOTE: These correspond to the numbered lines in the pseudocode spec.
+        public IReadOnlyDictionary<string, int> FieldIndexes { get; } = new Dictionary<string, int>
+        {
+            [KnownSchemas.PointWithMultiLeader.FIELDS.LATTITUDE] = 3,
+            [KnownSchemas.PointWithMultiLeader.FIELDS.LONGITUDE] = 5,
+            [KnownSchemas.PointWithMultiLeader.FIELDS.HEIGHT] = 7,
+            [KnownSchemas.PointWithMultiLeader.FIELDS.LAYER_NAME] = 17,
+            [KnownSchemas.PointWithMultiLeader.FIELDS.DESCRIPTION] = 81,
+        };
+
         public string Name
         {
             get

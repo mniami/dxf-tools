@@ -6,7 +6,10 @@ internal static class SoundPlanFileMapperExtensions
 {
     public static SoundPlanPoint[] ParseSoundPlanPoints(this string[] soundPlanLines)
     {
-        return soundPlanLines.Skip(3).Select(line => line.Split('\t')).Select(line => new SoundPlanPoint
+        return soundPlanLines.Skip(3)
+        .Where(line => line.Trim().Length > 0)
+        .Select(line => line.Split('\t'))
+        .Select(line => new SoundPlanPoint
             {
                 Idx = int.Parse(line[0]),
                 Latitude = line[1],

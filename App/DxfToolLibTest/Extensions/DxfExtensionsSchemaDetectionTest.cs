@@ -53,7 +53,7 @@ public class DxfExtensionsSchemaDetectionTest
         dynamic.Add("Note text here");
         var input = dynamic.ToArray();
 
-        var points = new [] { new DxfPoint { Latitude="0", Longitude="0", Height="0", Layer="L", Description="D" } };
+        var points = new [] { new DxfPointReportItem { Latitude="0", Longitude="0", Height="0", Layer="L", Description="D" } };
 
         // Act
         var output = input.UpdateDxfWithSoundPlanData(points, schema);
@@ -68,7 +68,7 @@ public class DxfExtensionsSchemaDetectionTest
     public void IgnoresIncompleteSequence()
     {
         var incomplete = new [] { "AcDbPoint", "10", "123.4", "20" /* stops early */ };
-        var points = System.Array.Empty<DxfPoint>();
+        var points = System.Array.Empty<DxfPointReportItem>();
         var output = incomplete.UpdateDxfWithSoundPlanData(points, schema);
         Assert.Equal(incomplete.Length, output.Length);
     }

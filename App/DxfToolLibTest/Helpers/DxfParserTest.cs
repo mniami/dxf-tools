@@ -147,15 +147,22 @@ AcDbText", @"6533599.54,5931087.52,9.032")]
         return Verify(outputLines);
     }
 
+
     [Theory]
-    [InlineData("Resources\\geometry-point.dxf")]
-    public Task ParsePointsWithMultiLeadersTest(string filePath)
+    [InlineData("Resources\\dxf-updater\\input\\points.dxf", "Resources\\dxf-updater\\input\\raport.csv", "Resources\\dxf-updater\\input\\soundplan.txt", "Resources\\dxf-updater\\expected\\expected.dxf", "Resources\\dxf-updater\\input\\points_updated.dxf")]
+    public Task UpdateDxf(string pointsFilePath, string raportCsvFilePath, string soundPlanFilePath, string expectedFilePath, string outputFilePath )
     {
-        var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", filePath);
-        var inputLines = File.ReadAllLines(fullPath, System.Text.Encoding.UTF8);
+        var pointsLinesPath = pointsFilePath.GetFullPath();
+        var raportCsvPath = raportCsvFilePath.GetFullPath();
+        var soundPlanPath = soundPlanFilePath.GetFullPath();
+        var expectedPath = expectedFilePath.GetFullPath();
+        var outputPath = outputFilePath.GetFullPath();
 
         // Use FindHighPoints to maintain compatibility with existing test expectations
-        var outputLines = parser.FindHighPoints(1014, "", inputLines);
-        return Verify(outputLines);
+        parser.UpdateDxfPointsWithSoundPlanDataSave(pointsLinesPath, soundPlanPath, raportCsvPath, outputPath+".tmp");
+        var outputLines = File.ReadAllLines(outputPath, System.Text.Encoding.UTF8).Where(p=>p.Contains("\\fArial")).ToArray();
+        var expectedLines = File.ReadAllLines(expectedPath, System.Text.Encoding.UTF8).Where(p=>p.Contains("\\fArial")).ToArray();
+        Assert.Equal(expectedLines, outputLines);
+        return Task.CompletedTask;
     }
 }
